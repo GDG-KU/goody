@@ -1,10 +1,9 @@
 export type UserData = {
-  id: number;
-  name: string;
+  userId: number;
+  userName: string;
   email: string;
   birthday: Date | null;
-  cityId: number | null;
-  categoryId: number;
+  profileImage: string | null;
   password?: string;
   refreshToken?: string | null;
 };

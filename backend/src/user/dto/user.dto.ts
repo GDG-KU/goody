@@ -6,13 +6,13 @@ export class UserDto {
     description: '유저 ID',
     type: Number,
   })
-  id!: number;
+  userId!: number;
 
   @ApiProperty({
     description: '유저 이름',
     type: String,
   })
-  name!: string;
+  userName!: string;
 
   @ApiProperty({
     description: '유저 이메일',
@@ -27,27 +27,12 @@ export class UserDto {
   })
   birthday!: Date | null;
 
-  @ApiProperty({
-    description: '도시 ID',
-    type: Number,
-    nullable: true,
-  })
-  cityId!: number | null;
-
-  @ApiProperty({
-    description: '카테고리 ID',
-    type: Number,
-  })
-  categoryId!: number;
-
   static from(user: UserData): UserDto {
     return {
-      id: user.id,
-      name: user.name,
+      userId: user.userId,
+      userName: user.userName,
       email: user.email,
       birthday: user.birthday,
-      cityId: user.cityId,
-      categoryId: user.categoryId,
     };
   }
 

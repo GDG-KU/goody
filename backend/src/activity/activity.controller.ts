@@ -12,7 +12,7 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { EventService } from './event.service';
+import { EventService } from './activity.service';
 import {
   ApiBearerAuth,
   ApiCreatedResponse,
@@ -21,12 +21,12 @@ import {
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
-import { EventDto, EventListDto } from './dto/event.dto';
-import { CreateEventPayload } from './payload/create-event.payload';
+import { EventDto, EventListDto } from './dto/activity.dto';
+import { CreateEventPayload } from './payload/create-activity.payload';
 import { EventParticipantPayload } from './payload/create-eventJoin.payload';
-import { EventQuery } from './query/event.query';
-import { PatchUpdateEventPayload } from './payload/patch-update-event.payload';
-import { PutUpdateEventPayload } from './payload/put-update-event.payload';
+import { EventQuery } from './query/activity.query';
+import { PatchUpdateEventPayload } from './payload/patch-update-activity.payload';
+import { PutUpdateEventPayload } from './payload/put-update-activity.payload';
 import { JwtAuthGuard } from 'src/auth/guard/jwt-auth.guard';
 import { CurrentUser } from 'src/auth/decorator/user.decorator';
 import { UserBaseInfo } from 'src/auth/type/user-base-info.type';

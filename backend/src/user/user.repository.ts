@@ -12,8 +12,7 @@ export class UserRepository {
   async getUserById(userId: number): Promise<User | null> {
     return this.prisma.user.findFirst({
       where: {
-        id: userId,
-        deletedAt: null,
+        userId: userId,
       },
     });
   }
@@ -27,30 +26,27 @@ export class UserRepository {
 
     return user === null;
   }
+  async isUserNameUnique(userName: string): Promise<boolean> {
+    const user = await this.prisma.user.findUnique({
+      where: {
+        userName: userName,
+      },
+    });
+
+    return user === null;
+  }
 
   async getUserInfoById(userId: number): Promise<UserData | null> {
     return this.prisma.user.findUnique({
       where: {
-        id: userId,
+        userId: userId,
       },
       select: {
-        id: true,
+        userId: true,
         email: true,
-        name: true,
+        userName: true,
         birthday: true,
-        cityId: true,
-        categoryId: true,
-      },
-    });
-  }
-
-  async deleteUser(userId: number): Promise<void> {
-    await this.prisma.user.update({
-      where: {
-        id: userId,
-      },
-      data: {
-        deletedAt: new Date(),
+        profileImage: true,
       },
     });
   }
@@ -58,22 +54,20 @@ export class UserRepository {
   async updateUser(userId: number, data: UpdateUserData): Promise<UserData> {
     return this.prisma.user.update({
       where: {
-        id: userId,
+        userId: userId,
       },
       data: {
         email: data.email,
-        name: data.name,
+        userName: data.userName,
         birthday: data.birthday,
-        cityId: data.cityId,
-        categoryId: data.categoryId,
+        profileImage: data.profileImage,
       },
       select: {
-        id: true,
+        userId: true,
         email: true,
-        name: true,
+        userName: true,
         birthday: true,
-        cityId: true,
-        categoryId: true,
+        profileImage: true,
       },
     });
   }

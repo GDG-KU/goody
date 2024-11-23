@@ -10,11 +10,9 @@ import {
 import { UserService } from './user.service';
 import {
   ApiBearerAuth,
-  ApiCreatedResponse,
   ApiNoContentResponse,
   ApiOkResponse,
   ApiOperation,
-  ApiTags,
 } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/guard/jwt-auth.guard';
 import { UserDto } from './dto/user.dto';
@@ -34,18 +32,5 @@ export class UserController {
     @CurrentUser() user: UserBaseInfo,
   ): Promise<UserDto> {
     return this.userService.getUserInfoById(userId, user);
-  }
-
-  @Delete(':userId')
-  @HttpCode(204)
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
-  @ApiOperation({ summary: '유저 탈퇴' })
-  @ApiNoContentResponse()
-  async deleteUser(
-    @Param('userId', ParseIntPipe) userId: number,
-    @CurrentUser() user: UserBaseInfo,
-  ): Promise<void> {
-    return this.userService.deleteUser(userId, user);
   }
 }

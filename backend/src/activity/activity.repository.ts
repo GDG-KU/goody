@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../common/services/prisma.service';
-import { CreateEventData } from './type/create-event-data.type';
-import { EventData } from './type/event-data.type';
+import { CreateEventData } from './type/create-activity-data.type';
+import { EventData } from './type/activity-data.type';
 import { User, Event, Category, City, EventJoin } from '@prisma/client';
-import { EventQuery } from './query/event.query';
-import { UpdateEventData } from './type/update-event-data.type';
+import { EventQuery } from './query/activity.query';
+import { UpdateEventData } from './type/update-activity-data.type';
 import { UserBaseInfo } from 'src/auth/type/user-base-info.type';
 
 @Injectable()

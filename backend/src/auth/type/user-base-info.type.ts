@@ -1,10 +1,9 @@
 export type UserBaseInfo = {
-  id: number;
+  userId: number;
+  userName: string;
   email: string;
-  password: string;
-  name: string;
   birthday: Date | null;
-  cityId: number | null;
-  categoryId: number;
+  profileImage: string | null;
+  password: string;
   refreshToken: string | null;
 };

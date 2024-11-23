@@ -3,7 +3,7 @@ import { PrismaService } from '../common/services/prisma.service';
 import { CreateClubData } from './type/create-club-data.type';
 import { ClubData } from './type/club-data.type';
 import { User, Club, ClubJoin, WaitingStatus } from '@prisma/client';
-import { EventData } from 'src/event/type/event-data.type';
+import { EventData } from 'src/activity/type/activity-data.type';
 @Injectable()
 export class ClubRepository {
   constructor(private readonly prisma: PrismaService) {}

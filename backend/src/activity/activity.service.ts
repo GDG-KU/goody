@@ -5,14 +5,14 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { EventRepository } from './event.repository';
-import { CreateEventPayload } from './payload/create-event.payload';
-import { EventDto, EventListDto } from './dto/event.dto';
-import { CreateEventData } from './type/create-event-data.type';
-import { EventQuery } from './query/event.query';
-import { UpdateEventData } from './type/update-event-data.type';
-import { PatchUpdateEventPayload } from './payload/patch-update-event.payload';
-import { PutUpdateEventPayload } from './payload/put-update-event.payload';
+import { EventRepository } from './activity.repository';
+import { CreateEventPayload } from './payload/create-activity.payload';
+import { EventDto, EventListDto } from './dto/activity.dto';
+import { CreateEventData } from './type/create-activity-data.type';
+import { EventQuery } from './query/activity.query';
+import { UpdateEventData } from './type/update-activity-data.type';
+import { PatchUpdateEventPayload } from './payload/patch-update-activity.payload';
+import { PutUpdateEventPayload } from './payload/put-update-activity.payload';
 import { UserBaseInfo } from 'src/auth/type/user-base-info.type';
 
 @Injectable()

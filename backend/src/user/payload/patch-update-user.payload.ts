@@ -17,7 +17,7 @@ export class PatchUpdateUserPayload {
     description: '유저 이름',
     type: String,
   })
-  name?: string | null;
+  userName?: string | null;
 
   @IsOptional()
   @IsEmail()
@@ -38,19 +38,11 @@ export class PatchUpdateUserPayload {
   birthday?: Date | null;
 
   @IsOptional()
-  @IsInt()
+  @IsString()
   @ApiPropertyOptional({
-    description: '도시 ID',
-    type: Number,
+    description: '프로필 이미지',
+    type: String,
     nullable: true,
   })
-  cityId?: number | null;
-
-  @IsOptional()
-  @IsInt()
-  @ApiPropertyOptional({
-    description: '카테고리 ID',
-    type: Number,
-  })
-  categoryId?: number | null;
+  profileImage?: string | null;
 }

@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { EventData } from '../type/event-data.type';
+import { EventData } from '../type/activity-data.type';
 import { IsOptional } from 'class-validator';
 
 export class EventDto {

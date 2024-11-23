@@ -13,24 +13,19 @@ export class UserService {
   constructor(private readonly userRepository: UserRepository) {}
 
   async getUserInfoById(userId: number, user: UserBaseInfo): Promise<UserDto> {
-    if (userId !== user.id) {
+    if (userId !== user.userId) {
       throw new NotFoundException('해당 권한이 없습니다.');
     }
 
     return UserDto.from(user);
   }
-  async deleteUser(userId: number, user: UserBaseInfo): Promise<void> {
-    if (userId !== user.id) {
-      throw new NotFoundException('해당 권한이 없습니다.');
-    }
-    return this.userRepository.deleteUser(userId);
-  }
+
   async PatchUpdateUser(
     userId: number,
     payload: PatchUpdateUserPayload,
     user: UserBaseInfo,
   ): Promise<UserDto> {
-    if (payload.name === null) {
+    if (payload.userName === null) {
       throw new BadRequestException('Name은 null이 될 수 없습니다.');
     }
     if (payload.email === null) {
@@ -39,11 +34,8 @@ export class UserService {
     if (payload.birthday === null) {
       throw new BadRequestException('Birthday는 null이 될 수 없습니다.');
     }
-    if (payload.categoryId === null) {
-      throw new BadRequestException('Category는 null이 될 수 없습니다.');
-    }
 
-    if (userId !== user.id) {
+    if (userId !== user.userId) {
       throw new NotFoundException('해당 권한이 없습니다.');
     }
 
@@ -52,16 +44,23 @@ export class UserService {
         payload.email,
       );
       if (!isEmailUnique) {
-        throw new BadRequestException('Email이 이미 존재합니다.');
+        throw new BadRequestException('이미 있는 Email입니다.');
+      }
+    }
+    if (payload.userName !== user.userName && payload.userName !== undefined) {
+      const isUserNameUnique = await this.userRepository.isUserNameUnique(
+        payload.userName,
+      );
+      if (!isUserNameUnique) {
+        throw new BadRequestException('이미 있는 UserName입니다.');
       }
     }
 
     const updateData = {
       email: payload.email,
-      name: payload.name,
+      name: payload.userName,
       birthday: payload.birthday,
-      cityId: payload.cityId,
-      categoryId: payload.categoryId,
+      profileImage: payload.profileImage,
     };
 
     const updatedUser = await this.userRepository.updateUser(

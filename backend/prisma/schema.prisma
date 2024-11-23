@@ -15,15 +15,15 @@ generator client {
 
 model User {
   userId       Int     @id @map("user_id")
-  username     String
+  userName     String  @unique
   email        String  @unique
+  birthday     DateTime?
   profileImage String? @map("profile_image")
   password     String
   refreshToken String? @map("refresh_token")
 
   activities       Activity[]
   userLocations    UserLocation[]
-  recommendations  Recommendation[]
   recentActivities RecentActivity[]
 
   @@map("user")
@@ -71,7 +71,6 @@ model ActivityLocation {
   latitude   Float
   longitude  Float
 
-  recommendations Recommendation[]
 
   @@map("activity_location")
 }
@@ -83,24 +82,11 @@ model UserLocation {
   longitude      Float
 
   user            User             @relation(fields: [userId], references: [userId])
-  recommendations Recommendation[]
+  
 
   @@map("user_location")
 }
 
-model Recommendation {
-  recommendationId Int      @id @map("recommendation_id")
-  locationId       Int      @map("location_id")
-  userId           Int      @map("user_id")
-  userLocationId   Int      @map("user_location_id")
-  createdAt        DateTime @map("created_at")
-
-  location     ActivityLocation @relation(fields: [locationId], references: [locationId])
-  user         User             @relation(fields: [userId], references: [userId])
-  userLocation UserLocation     @relation(fields: [userLocationId], references: [userLocationId])
-
-  @@map("recommendations")
-}
 
 model RecentActivity {
   recentActivityId Int      @id @map("recent_activity_id")
