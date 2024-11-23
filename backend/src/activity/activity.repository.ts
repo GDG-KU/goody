@@ -1,18 +1,18 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../common/services/prisma.service';
-import { CreateEventData } from './type/create-activity-data.type';
-import { EventData } from './type/activity-data.type';
-import { User, Event, Category, City, EventJoin } from '@prisma/client';
-import { EventQuery } from './query/activity.query';
-import { UpdateEventData } from './type/update-activity-data.type';
+import { CreateActivityData } from './type/create-activity-data.type';
+import { ActivityData } from './type/activity-data.type';
+import { User, Activity, Category, City, ActivityJoin } from '@prisma/client';
+import { ActivityQuery } from './query/activity.query';
+import { UpdateActivityData } from './type/update-activity-data.type';
 import { UserBaseInfo } from 'src/auth/type/user-base-info.type';
 
 @Injectable()
-export class EventRepository {
+export class ActivityRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async createEvent(data: CreateEventData): Promise<EventData> {
-    return this.prisma.event.create({
+  async createActivity(data: CreateActivityData): Promise<ActivityData> {
+    return this.prisma.activity.create({
       data: {
         hostId: data.hostId,
         title: data.title,
@@ -21,12 +21,12 @@ export class EventRepository {
         startTime: data.startTime,
         endTime: data.endTime,
         maxPeople: data.maxPeople,
-        eventJoin: {
+        activityJoin: {
           create: {
             userId: data.hostId,
           },
         },
-        eventCity: {
+        activityCity: {
           create: data.cityIds.map((cityId) => ({
             cityId: cityId,
           })),
@@ -38,7 +38,7 @@ export class EventRepository {
         title: true,
         description: true,
         categoryId: true,
-        eventCity: {
+        activityCity: {
           select: {
             id: true,
             cityId: true,
@@ -55,14 +55,10 @@ export class EventRepository {
       },
     });
   }
-  async getMyEvents(userId: number): Promise<EventData[]> {
-    return this.prisma.event.findMany({
+  async getMyActivitys(userId: number): Promise<ActivityData[]> {
+    return this.prisma.activity.findMany({
       where: {
-        eventJoin: {
-          some: {
-            userId: userId,
-          },
-        },
+        userId: userId,
       },
       select: {
         id: true,
@@ -70,7 +66,7 @@ export class EventRepository {
         title: true,
         description: true,
         categoryId: true,
-        eventCity: {
+        activityCity: {
           select: {
             id: true,
             cityId: true,
@@ -113,24 +109,24 @@ export class EventRepository {
     });
   }
 
-  async getCityIdsByEventId(eventId: number): Promise<number[]> {
-    const eventCity = await this.prisma.eventCity.findMany({
+  async getCityIdsByActivityId(activityId: number): Promise<number[]> {
+    const activityCity = await this.prisma.activityCity.findMany({
       where: {
-        eventId: eventId,
+        activityId: activityId,
       },
     });
 
-    return eventCity.map((city) => city.cityId);
+    return activityCity.map((city) => city.cityId);
   }
 
-  async isEventExist(id: number): Promise<boolean> {
-    const event = await this.prisma.event.findUnique({
+  async isActivityExist(id: number): Promise<boolean> {
+    const activity = await this.prisma.activity.findUnique({
       where: {
         id: id,
       },
     });
 
-    return !!event;
+    return !!activity;
   }
   async isUserInClub(userId: number, clubId: number): Promise<boolean> {
     const userInClub = await this.prisma.clubJoin.findUnique({
@@ -148,11 +144,14 @@ export class EventRepository {
     return !!userInClub;
   }
 
-  async isUserJoinedEvent(userId: number, eventId: number): Promise<boolean> {
-    const event = await this.prisma.eventJoin.findUnique({
+  async isUserJoinedActivity(
+    userId: number,
+    activityId: number,
+  ): Promise<boolean> {
+    const activity = await this.prisma.activityJoin.findUnique({
       where: {
-        eventId_userId: {
-          eventId,
+        activityId_userId: {
+          activityId,
           userId,
         },
         user: {
@@ -161,31 +160,31 @@ export class EventRepository {
       },
     });
 
-    return !!event;
+    return !!activity;
   }
-  async joinEvent(eventId: number, userId: number): Promise<void> {
-    await this.prisma.eventJoin.create({
+  async joinActivity(activityId: number, userId: number): Promise<void> {
+    await this.prisma.activityJoin.create({
       data: {
-        eventId,
+        activityId,
         userId,
       },
       select: {
         id: true,
-        eventId: true,
+        activityId: true,
         userId: true,
         createdAt: true,
         updatedAt: true,
       },
     });
   }
-  async getEventJoin(id: number): Promise<EventJoin | null> {
-    return this.prisma.eventJoin.findUnique({
+  async getActivityJoin(id: number): Promise<ActivityJoin | null> {
+    return this.prisma.activityJoin.findUnique({
       where: {
         id: id,
       },
       select: {
         id: true,
-        eventId: true,
+        activityId: true,
         userId: true,
         createdAt: true,
         updatedAt: true,
@@ -193,27 +192,27 @@ export class EventRepository {
     });
   }
 
-  async getEventJoinCount(eventId: number): Promise<number> {
-    return this.prisma.eventJoin.count({
+  async getActivityJoinCount(activityId: number): Promise<number> {
+    return this.prisma.activityJoin.count({
       where: {
-        eventId,
+        activityId,
       },
     });
   }
 
-  async outEvent(eventId: number, userId: number): Promise<void> {
-    await this.prisma.eventJoin.delete({
+  async outActivity(activityId: number, userId: number): Promise<void> {
+    await this.prisma.activityJoin.delete({
       where: {
-        eventId_userId: {
-          eventId,
+        activityId_userId: {
+          activityId,
           userId,
         },
       },
     });
   }
 
-  async getEventById(id: number): Promise<EventData | null> {
-    return this.prisma.event.findUnique({
+  async getActivityById(id: number): Promise<ActivityData | null> {
+    return this.prisma.activity.findUnique({
       where: {
         id: id,
       },
@@ -223,7 +222,7 @@ export class EventRepository {
         title: true,
         description: true,
         categoryId: true,
-        eventCity: {
+        activityCity: {
           select: {
             id: true,
             cityId: true,
@@ -241,12 +240,14 @@ export class EventRepository {
     });
   }
 
-  async getEvents(query: EventQuery): Promise<EventData[]> {
-    return this.prisma.event.findMany({
+  async getActivitys(query: ActivityQuery): Promise<ActivityData[]> {
+    return this.prisma.activity.findMany({
       where: {
         hostId: query.hostId,
         categoryId: query.categoryId,
-        ...(query.cityId && { eventCity: { some: { cityId: query.cityId } } }),
+        ...(query.cityId && {
+          activityCity: { some: { cityId: query.cityId } },
+        }),
       },
       select: {
         id: true,
@@ -254,7 +255,7 @@ export class EventRepository {
         title: true,
         description: true,
         categoryId: true,
-        eventCity: {
+        activityCity: {
           select: {
             id: true,
             cityId: true,
@@ -272,13 +273,13 @@ export class EventRepository {
     });
   }
 
-  async updateEvent(
-    eventId: number,
-    data: UpdateEventData,
-  ): Promise<EventData> {
-    return this.prisma.event.update({
+  async updateActivity(
+    activityId: number,
+    data: UpdateActivityData,
+  ): Promise<ActivityData> {
+    return this.prisma.activity.update({
       where: {
-        id: eventId,
+        id: activityId,
       },
       data: {
         title: data.title,
@@ -288,10 +289,10 @@ export class EventRepository {
         endTime: data.endTime,
         maxPeople: data.maxPeople,
         ...(data.cityIds !== undefined && {
-          eventCity: {
+          activityCity: {
             updateMany: {
               where: {
-                eventId: eventId,
+                activityId: activityId,
               },
               data: data.cityIds.map((cityId) => ({
                 cityId: cityId,
@@ -306,7 +307,7 @@ export class EventRepository {
         title: true,
         description: true,
         categoryId: true,
-        eventCity: {
+        activityCity: {
           select: {
             id: true,
             cityId: true,
@@ -335,21 +336,21 @@ export class EventRepository {
     return city.length === cityIds.length;
   }
 
-  async deleteEvent(eventId: number): Promise<void> {
+  async deleteActivity(activityId: number): Promise<void> {
     await this.prisma.$transaction([
-      this.prisma.eventJoin.deleteMany({
+      this.prisma.activityJoin.deleteMany({
         where: {
-          eventId: eventId,
+          activityId: activityId,
         },
       }),
-      this.prisma.eventCity.deleteMany({
+      this.prisma.activityCity.deleteMany({
         where: {
-          eventId: eventId,
+          activityId: activityId,
         },
       }),
-      this.prisma.event.delete({
+      this.prisma.activity.delete({
         where: {
-          id: eventId,
+          id: activityId,
         },
       }),
     ]);
