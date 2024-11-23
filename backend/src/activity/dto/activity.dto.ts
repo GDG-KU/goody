@@ -1,99 +1,77 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { EventData } from '../type/activity-data.type';
+import { ActivityData } from '../type/activity-data.type';
 import { IsOptional } from 'class-validator';
 
-export class EventDto {
-  @ApiProperty({
-    description: '호스트 ID',
-    type: Number,
-  })
-  hostId!: number;
-
-  @ApiProperty({
-    description: '클럽 ID',
-    type: Number,
-    nullable: true,
-  })
-  clubId!: number | null;
-
+export class ActivityDto {
   @ApiProperty({
     description: '모임 ID',
     type: Number,
   })
-  id!: number;
+  activityId!: number;
 
   @ApiProperty({
-    description: '모임 이름',
+    description: '제목',
     type: String,
   })
   title!: string;
 
   @ApiProperty({
-    description: '도시 ID들',
-    type: [Number],
-  })
-  cityIds!: number[];
-
-  @ApiProperty({
-    description: '모임 설명',
+    description: '설명',
     type: String,
   })
   description!: string;
 
   @ApiProperty({
-    description: '카테고리 ID',
+    description: '장소 이름',
+    type: String,
+  })
+  locationName!: string;
+
+  @ApiProperty({
+    description: '이미지 주소',
     type: Number,
   })
-  categoryId!: number;
+  imageUrl!: string;
 
   @ApiProperty({
-    description: '시작 시간',
-    type: Date,
-  })
-  startTime!: Date;
-
-  @ApiProperty({
-    description: '종료 시간',
-    type: Date,
-  })
-  endTime!: Date;
-
-  @ApiProperty({
-    description: '최대 인원',
+    description: '유저 ID',
     type: Number,
   })
-  maxPeople!: number;
+  userId!: number;
 
-  static from(event: EventData): EventDto {
+  @ApiProperty({
+    description: '키워드들',
+    type: [String],
+  })
+  keywords!: string[];
+
+  static from(activity: ActivityData): ActivityDto {
     return {
-      hostId: event.hostId,
-      id: event.id,
-      clubId: event.club?.id ?? null,
-      title: event.title,
-      description: event.description,
-      categoryId: event.categoryId,
-      startTime: event.startTime,
-      endTime: event.endTime,
-      maxPeople: event.maxPeople,
-      cityIds: event.eventCity.map((city) => city.cityId),
+      activityId: activity.activityId,
+      userId: activity.userId,
+      title: activity.title,
+      description: activity.description,
+      locationName: activity.locationName,
+      imageUrl: activity.imageUrl,
+      keywords: activity.activityKeywords.map((keyword) => keyword.name),
     };
   }
 
-  static fromArray(events: EventData[]): EventDto[] {
-    return events.map((event) => this.from(event));
+  static fromArray(activitys: ActivityData[]): ActivityDto[] {
+    return activitys.map((activity) => this.from(activity));
   }
 }
 
-export class EventListDto {
+export class ActivityListDto {
   @ApiProperty({
     description: '모임 목록',
-    type: [EventDto],
+    type: [ActivityDto],
   })
-  events!: EventDto[];
+  activitys!: ActivityDto[];
 
-  static from(events: EventData[]): EventListDto {
+  static from(activitys: ActivityData[]): ActivityListDto {
     return {
-      events: EventDto.fromArray(events),
+      activitys: ActivityDto.fromArray(activitys),
     };
   }
 }
