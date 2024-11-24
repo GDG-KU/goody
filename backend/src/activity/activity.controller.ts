@@ -38,7 +38,7 @@ export class ActivityController {
   @Post()
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  @ApiOperation({ summary: '모임을 생성합니다' })
+  @ApiOperation({ summary: '낭만 활동을 생성합니다' })
   @ApiCreatedResponse({ type: ActivityDto })
   async createActivity(
     @Body() payload: CreateActivityPayload,
@@ -50,7 +50,7 @@ export class ActivityController {
   @Get('me')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  @ApiOperation({ summary: '내가 참가한 모임 정보를 가져옵니다' })
+  @ApiOperation({ summary: '내가 만든 낭만 활동 정보를 가져옵니다' })
   @ApiOkResponse({ type: ActivityListDto })
   async getMyActivitys(
     @CurrentUser() user: UserBaseInfo,

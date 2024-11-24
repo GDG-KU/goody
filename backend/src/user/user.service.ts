@@ -12,11 +12,7 @@ import { PatchUpdateUserPayload } from './payload/patch-update-user.payload';
 export class UserService {
   constructor(private readonly userRepository: UserRepository) {}
 
-  async getUserInfoById(userId: number, user: UserBaseInfo): Promise<UserDto> {
-    if (userId !== user.id) {
-      throw new NotFoundException('해당 권한이 없습니다.');
-    }
-
+  async getUserInfoById(user: UserBaseInfo): Promise<UserDto> {
     return UserDto.from(user);
   }
 

@@ -63,7 +63,19 @@ export class ActivityRepository {
       },
     });
   }
-} /*
+
+  async checkKeywordIdsValid(keywordIds: number[]): Promise<boolean> {
+    const keyword = await this.prisma.keyword.findMany({
+      where: {
+        id: {
+          in: keywordIds,
+        },
+      },
+    });
+    return keyword.length === keywordIds.length;
+  }
+}
+/*
 
   async getUserById(userId: number): Promise<User | null> {
     return this.prisma.user.findUnique({

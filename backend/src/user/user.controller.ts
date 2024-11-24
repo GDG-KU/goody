@@ -25,12 +25,10 @@ export class UserController {
 
   @Get(':userId')
   @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @ApiOperation({ summary: '유저 정보 조회' })
   @ApiOkResponse({ type: UserDto })
-  async getUserInfoById(
-    @Param('userId', ParseIntPipe) userId: number,
-    @CurrentUser() user: UserBaseInfo,
-  ): Promise<UserDto> {
-    return this.userService.getUserInfoById(userId, user);
+  async getUserInfoById(@CurrentUser() user: UserBaseInfo): Promise<UserDto> {
+    return this.userService.getUserInfoById(user);
   }
 }
