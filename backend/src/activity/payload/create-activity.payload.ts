@@ -1,5 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
+  IsArray,
   IsDate,
   IsIn,
   IsInt,
@@ -8,6 +9,7 @@ import {
   Max,
   Min,
 } from 'class-validator';
+import { Transform } from 'class-transformer';
 import { Type } from 'class-transformer';
 
 export class CreateActivityPayload {
@@ -18,10 +20,20 @@ export class CreateActivityPayload {
   })
   title!: string;
 
+  @IsArray()
   @IsInt({ each: true })
   @ApiProperty({
     description: '키워드 ID들',
     type: [Number],
+  })
+  @Transform(({ value }) => {
+    if (typeof value === 'string') {
+      return value.split(',').map((item) => parseInt(item.trim(), 10));
+    }
+    if (Array.isArray(value)) {
+      return value.map((item) => parseInt(item, 10));
+    }
+    return [];
   })
   keywords!: number[];
 
@@ -39,12 +51,10 @@ export class CreateActivityPayload {
   })
   locationName!: string;
 
-  @IsString()
-  @IsOptional()
-  @ApiPropertyOptional({
-    description: '이미지 주소',
-    type: String,
-    nullable: true,
+  @ApiProperty({
+    description: '이미지 파일',
+    type: 'string',
+    format: 'binary',
   })
-  imageUrl?: string | null;
+  image!: any;
 }

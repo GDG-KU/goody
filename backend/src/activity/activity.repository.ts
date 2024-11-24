@@ -137,6 +137,15 @@ export class ActivityRepository {
     });
     return recentActivities.map((recent) => recent.activity);
   }
+  async updateActivityImage(
+    activityId: number,
+    imageUrl: string,
+  ): Promise<void> {
+    await this.prisma.activity.update({
+      where: { id: activityId },
+      data: { imageUrl },
+    });
+  }
 
   /*
 

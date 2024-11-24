@@ -21,6 +21,7 @@ export class ActivityService {
 
   async createActivity(
     payload: CreateActivityPayload,
+    imageUrl: string,
     user: UserBaseInfo,
   ): Promise<ActivityDto> {
     const createData: CreateActivityData = {
@@ -29,7 +30,7 @@ export class ActivityService {
       description: payload.description,
       locationName: payload.locationName,
       keywords: payload.keywords,
-      imageUrl: payload.imageUrl,
+      imageUrl: imageUrl,
     };
     const checkKeyword = await this.activityRepository.checkKeywordIdsValid(
       payload.keywords,
@@ -70,6 +71,24 @@ export class ActivityService {
     await this.activityRepository.createRecentActivity(activityId, user.id);
 
     return ActivityDto.from(activity);
+  }
+
+  async updateActivityImage(
+    activityId: number,
+    imageUrl: string,
+    userId: number,
+  ): Promise<void> {
+    const activity =
+      await this.activityRepository.getActivityByActivityId(activityId);
+    if (!activity) {
+      throw new NotFoundException('해당 활동이 존재하지 않습니다.');
+    }
+    if (activity.userId !== userId) {
+      throw new ForbiddenException(
+        '이 활동의 이미지를 수정할 권한이 없습니다.',
+      );
+    }
+    await this.activityRepository.updateActivityImage(activityId, imageUrl);
   }
 }
 /*

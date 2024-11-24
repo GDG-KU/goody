@@ -11,6 +11,8 @@ import {
   Put,
   Query,
   UseGuards,
+  UseInterceptors,
+  UploadedFile,
 } from '@nestjs/common';
 import { ActivityService } from './activity.service';
 import {
@@ -20,6 +22,8 @@ import {
   ApiOkResponse,
   ApiOperation,
   ApiTags,
+  ApiConsumes,
+  ApiBody,
 } from '@nestjs/swagger';
 import { ActivityDto, ActivityListDto } from './dto/activity.dto';
 import { CreateActivityPayload } from './payload/create-activity.payload';
@@ -29,12 +33,18 @@ import { PutUpdateActivityPayload } from './payload/put-update-activity.payload'
 import { JwtAuthGuard } from 'src/auth/guard/jwt-auth.guard';
 import { CurrentUser } from 'src/auth/decorator/user.decorator';
 import { UserBaseInfo } from 'src/auth/type/user-base-info.type';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import {
+  editFileName,
+  imageFileFilter,
+} from 'src/common/utils/file-upload.utils';
 
 @Controller('activities')
 @ApiTags('Activity API')
 export class ActivityController {
   constructor(private readonly activityService: ActivityService) {}
-
+  /*
   @Post()
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
@@ -45,6 +55,37 @@ export class ActivityController {
     @CurrentUser() user: UserBaseInfo,
   ): Promise<ActivityDto> {
     return this.activityService.createActivity(payload, user);
+  }*/
+
+  @Post()
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @UseInterceptors(
+    FileInterceptor('image', {
+      storage: diskStorage({
+        destination: './uploads/activity-images',
+        filename: editFileName,
+      }),
+      fileFilter: imageFileFilter,
+    }),
+  )
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    description: '활동 생성 데이터',
+    type: CreateActivityPayload,
+  })
+  async createActivity(
+    @UploadedFile() file: Express.Multer.File,
+    @Body() createActivityPayload: CreateActivityPayload,
+    @CurrentUser() user: UserBaseInfo,
+  ) {
+    console.log('Received Payload:', createActivityPayload);
+    const imageUrl = `/uploads/activity-images/${file.filename}`;
+    return this.activityService.createActivity(
+      createActivityPayload,
+      imageUrl,
+      user,
+    );
   }
 
   @Get('me')
@@ -80,6 +121,7 @@ export class ActivityController {
   ): Promise<ActivityDto> {
     return this.activityService.getActivityByActivityId(activityId, user);
   }
+
   /*
 
   @Get()
