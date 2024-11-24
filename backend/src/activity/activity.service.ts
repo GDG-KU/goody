@@ -31,6 +31,12 @@ export class ActivityService {
       keywords: payload.keywords,
       imageUrl: payload.imageUrl,
     };
+    const checkKeyword = await this.activityRepository.checkKeywordIdsValid(
+      payload.keywords,
+    );
+    if (!checkKeyword) {
+      throw new BadRequestException('키워드가 존재하지 않습니다.');
+    }
 
     const activity = await this.activityRepository.createActivity(createData);
 
