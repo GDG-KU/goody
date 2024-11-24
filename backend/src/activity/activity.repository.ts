@@ -5,7 +5,6 @@ import { ActivityData } from './type/activity-data.type';
 import { User, Activity } from '@prisma/client';
 import { ActivityQuery } from './query/activity.query';
 import { UpdateActivityData } from './type/update-activity-data.type';
-import { UserBaseInfo } from 'src/auth/type/user-base-info.type';
 
 @Injectable()
 export class ActivityRepository {
@@ -63,6 +62,50 @@ export class ActivityRepository {
       },
     });
   }
+  async getActivityByActivityId(
+    activityId: number,
+  ): Promise<ActivityData | null> {
+    return this.prisma.activity.findUnique({
+      where: {
+        id: activityId,
+      },
+      select: {
+        id: true,
+        imageUrl: true,
+        title: true,
+        description: true,
+        userId: true,
+        locationName: true,
+        activityKeywords: {
+          select: {
+            id: true,
+            keywordId: true,
+          },
+        },
+      },
+    });
+  }
+  async createRecentActivity(
+    activityId: number,
+    userId: number,
+  ): Promise<void> {
+    await this.prisma.recentActivity.upsert({
+      where: {
+        userId_activityId: {
+          userId,
+          activityId,
+        },
+      },
+      update: {
+        viewedAt: new Date(),
+      },
+      create: {
+        userId,
+        activityId,
+        viewedAt: new Date(),
+      },
+    });
+  }
 
   async checkKeywordIdsValid(keywordIds: number[]): Promise<boolean> {
     const keyword = await this.prisma.keyword.findMany({
@@ -74,8 +117,28 @@ export class ActivityRepository {
     });
     return keyword.length === keywordIds.length;
   }
-}
-/*
+
+  async getRecentActivities(userId: number): Promise<ActivityData[]> {
+    const recentActivities = await this.prisma.recentActivity.findMany({
+      where: { userId },
+      orderBy: { viewedAt: 'desc' },
+      take: 3,
+      include: {
+        activity: {
+          include: {
+            activityKeywords: {
+              include: {
+                keyword: true,
+              },
+            },
+          },
+        },
+      },
+    });
+    return recentActivities.map((recent) => recent.activity);
+  }
+
+  /*
 
   async getUserById(userId: number): Promise<User | null> {
     return this.prisma.user.findUnique({
@@ -312,3 +375,4 @@ export class ActivityRepository {
   }
 }
   */
+}

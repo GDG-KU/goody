@@ -48,6 +48,29 @@ export class ActivityService {
 
     return ActivityListDto.from(activitys);
   }
+
+  async getRecentActivities(user: UserBaseInfo): Promise<ActivityListDto> {
+    const activitys = await this.activityRepository.getRecentActivities(
+      user.id,
+    );
+
+    return ActivityListDto.from(activitys);
+  }
+
+  async getActivityByActivityId(
+    activityId: number,
+    user: UserBaseInfo,
+  ): Promise<ActivityDto> {
+    const activity =
+      await this.activityRepository.getActivityByActivityId(activityId);
+
+    if (!activity) {
+      throw new NotFoundException('activity가 존재하지 않습니다.');
+    }
+    await this.activityRepository.createRecentActivity(activityId, user.id);
+
+    return ActivityDto.from(activity);
+  }
 }
 /*
   async getActivityByActivityId(activityId: number): Promise<ActivityDto> {

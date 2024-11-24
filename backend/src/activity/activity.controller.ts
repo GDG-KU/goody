@@ -33,7 +33,7 @@ import { UserBaseInfo } from 'src/auth/type/user-base-info.type';
 @Controller('activities')
 @ApiTags('Activity API')
 export class ActivityController {
-  constructor(private readonly eventService: ActivityService) {}
+  constructor(private readonly activityService: ActivityService) {}
 
   @Post()
   @UseGuards(JwtAuthGuard)
@@ -44,7 +44,7 @@ export class ActivityController {
     @Body() payload: CreateActivityPayload,
     @CurrentUser() user: UserBaseInfo,
   ): Promise<ActivityDto> {
-    return this.eventService.createActivity(payload, user);
+    return this.activityService.createActivity(payload, user);
   }
 
   @Get('me')
@@ -55,17 +55,32 @@ export class ActivityController {
   async getMyActivitys(
     @CurrentUser() user: UserBaseInfo,
   ): Promise<ActivityListDto> {
-    return this.eventService.getMyActivitys(user);
+    return this.activityService.getMyActivitys(user);
   }
-  /*
-  @Get(':eventId')
-  @ApiOperation({ summary: '모임 상세 정보를 가져옵니다' })
+
+  @Get(':activityId/recents')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: '최근 활동 3개를 가져옵니다' })
+  @ApiOkResponse({ type: ActivityListDto })
+  async getRecentActivitys(
+    @CurrentUser() user: UserBaseInfo,
+  ): Promise<ActivityListDto> {
+    return this.activityService.getRecentActivities(user);
+  }
+
+  @Get(':activityId')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: '낭만활동 상세 정보를 가져옵니다' })
   @ApiOkResponse({ type: ActivityDto })
   async getActivityById(
-    @Param('eventId', ParseIntPipe) eventId: number,
+    @Param('activityId', ParseIntPipe) activityId: number,
+    @CurrentUser() user: UserBaseInfo,
   ): Promise<ActivityDto> {
-    return this.eventService.getActivityByActivityId(eventId);
+    return this.activityService.getActivityByActivityId(activityId, user);
   }
+  /*
 
   @Get()
   @ApiOperation({ summary: '여러 모임 정보를 가져옵니다' })
