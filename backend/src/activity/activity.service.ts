@@ -5,164 +5,128 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { EventRepository } from './activity.repository';
-import { CreateEventPayload } from './payload/create-activity.payload';
-import { EventDto, EventListDto } from './dto/activity.dto';
-import { CreateEventData } from './type/create-activity-data.type';
-import { EventQuery } from './query/activity.query';
-import { UpdateEventData } from './type/update-activity-data.type';
-import { PatchUpdateEventPayload } from './payload/patch-update-activity.payload';
-import { PutUpdateEventPayload } from './payload/put-update-activity.payload';
+import { ActivityRepository } from './activity.repository';
+import { CreateActivityPayload } from './payload/create-activity.payload';
+import { ActivityDto, ActivityListDto } from './dto/activity.dto';
+import { CreateActivityData } from './type/create-activity-data.type';
+import { ActivityQuery } from './query/activity.query';
+import { UpdateActivityData } from './type/update-activity-data.type';
+import { PatchUpdateActivityPayload } from './payload/patch-update-activity.payload';
+import { PutUpdateActivityPayload } from './payload/put-update-activity.payload';
 import { UserBaseInfo } from 'src/auth/type/user-base-info.type';
 
 @Injectable()
-export class EventService {
-  constructor(private readonly eventRepository: EventRepository) {}
+export class ActivityService {
+  constructor(private readonly activityRepository: ActivityRepository) {}
 
-  async createEvent(
-    payload: CreateEventPayload,
+  async createActivity(
+    payload: CreateActivityPayload,
     user: UserBaseInfo,
-  ): Promise<EventDto> {
-    const category = await this.eventRepository.getCategoryById(
-      payload.categoryId,
-    );
-    if (!category) {
-      throw new NotFoundException('category가 존재하지 않습니다.');
-    }
-
-    const cityValidity = await this.eventRepository.isCityIdsValid(
-      payload.cityIds,
-    );
-    if (!cityValidity) {
-      throw new NotFoundException('존재하지 않는 city가 포함되어 있습니다.');
-    }
-
-    if (payload.startTime < new Date()) {
-      throw new ConflictException(
-        '시작 시간이 현재 시간보다 빠를 수 없습니다.',
-      );
-    }
-
-    if (payload.startTime > payload.endTime) {
-      throw new ConflictException(
-        '시작 시간이 끝나는 시간보다 늦을 수 없습니다.',
-      );
-    }
-    if (payload.clubId) {
-      const userInClub = await this.eventRepository.isUserInClub(
-        user.id,
-        payload.clubId,
-      );
-      if (!userInClub) {
-        throw new ForbiddenException('이 클럽에 속해있지 않습니다.');
-      }
-    }
-
-    const createData: CreateEventData = {
-      hostId: user.id,
+  ): Promise<ActivityDto> {
+    const createData: CreateActivityData = {
+      userId: user.id,
       title: payload.title,
       description: payload.description,
-      cityIds: payload.cityIds,
-      categoryId: payload.categoryId,
-      startTime: payload.startTime,
-      endTime: payload.endTime,
-      maxPeople: payload.maxPeople,
+      locationName: payload.locationName,
+      keywords: payload.keywords,
+      imageUrl: payload.imageUrl,
     };
 
-    const event = await this.eventRepository.createEvent(createData);
+    const activity = await this.activityRepository.createActivity(createData);
 
-    return EventDto.from(event);
+    return ActivityDto.from(activity);
   }
 
-  async getMyEvents(user: UserBaseInfo): Promise<EventListDto> {
-    const events = await this.eventRepository.getMyEvents(user.id);
+  async getMyActivitys(user: UserBaseInfo): Promise<ActivityListDto> {
+    const activitys = await this.activityRepository.getMyActivitys(user.id);
 
-    return EventListDto.from(events);
+    return ActivityListDto.from(activitys);
   }
+}
+/*
+  async getActivityByActivityId(activityId: number): Promise<ActivityDto> {
+    const activity = await this.activityRepository.getActivityById(activityId);
 
-  async getEventByEventId(eventId: number): Promise<EventDto> {
-    const event = await this.eventRepository.getEventById(eventId);
-
-    if (!event) {
-      throw new NotFoundException('event가 존재하지 않습니다.');
+    if (!activity) {
+      throw new NotFoundException('activity가 존재하지 않습니다.');
     }
 
-    return EventDto.from(event);
+    return ActivityDto.from(activity);
   }
 
-  async getEvents(query: EventQuery): Promise<EventListDto> {
-    const events = await this.eventRepository.getEvents(query);
+  async getActivitys(query: ActivityQuery): Promise<ActivityListDto> {
+    const activitys = await this.activityRepository.getActivitys(query);
 
-    return EventListDto.from(events);
+    return ActivityListDto.from(activitys);
   }
 
-  async joinEvent(eventId: number, user: UserBaseInfo): Promise<void> {
-    const isUserJoinedEvent = await this.eventRepository.isUserJoinedEvent(
+  async joinActivity(activityId: number, user: UserBaseInfo): Promise<void> {
+    const isUserJoinedActivity = await this.activityRepository.isUserJoinedActivity(
       user.id,
-      eventId,
+      activityId,
     );
 
-    if (isUserJoinedEvent) {
+    if (isUserJoinedActivity) {
       throw new ConflictException('해당 유저가 이미 참가한 이벤트입니다.');
     }
 
-    const event = await this.eventRepository.getEventById(eventId);
+    const activity = await this.activityRepository.getActivityById(activityId);
 
-    if (!event) {
-      throw new NotFoundException('Event가 존재하지 않습니다.');
+    if (!activity) {
+      throw new NotFoundException('Activity가 존재하지 않습니다.');
     }
 
-    if (event.endTime < new Date()) {
+    if (activity.endTime < new Date()) {
       throw new ConflictException('이미 시작된 이벤트는 참가할 수 없습니다.');
     }
 
-    const currentPeople = await this.eventRepository.getEventJoinCount(eventId);
+    const currentPeople = await this.activityRepository.getActivityJoinCount(activityId);
 
-    if (event.maxPeople == currentPeople) {
+    if (activity.maxPeople == currentPeople) {
       throw new ConflictException('이미 정원이 다 찼습니다.');
     }
 
-    await this.eventRepository.joinEvent(eventId, user.id);
+    await this.activityRepository.joinActivity(activityId, user.id);
   }
 
-  async outEvent(eventId: number, user: UserBaseInfo): Promise<void> {
-    const isUserJoinedEvent = await this.eventRepository.isUserJoinedEvent(
+  async outActivity(activityId: number, user: UserBaseInfo): Promise<void> {
+    const isUserJoinedActivity = await this.activityRepository.isUserJoinedActivity(
       user.id,
-      eventId,
+      activityId,
     );
 
-    if (!isUserJoinedEvent) {
+    if (!isUserJoinedActivity) {
       throw new ConflictException('해당 유저가 참가하지 않은 이벤트입니다.');
     }
 
-    const event = await this.eventRepository.getEventById(eventId);
-    if (!event) {
-      throw new NotFoundException('Event가 존재하지 않습니다.');
+    const activity = await this.activityRepository.getActivityById(activityId);
+    if (!activity) {
+      throw new NotFoundException('Activity가 존재하지 않습니다.');
     }
 
-    if (event.hostId === user.id) {
+    if (activity.hostId === user.id) {
       throw new ConflictException('host는 이벤트에서 나갈 수 없습니다.');
     }
 
-    if (event.startTime < new Date()) {
+    if (activity.startTime < new Date()) {
       throw new ConflictException('이미 시작된 이벤트는 나갈 수 없습니다.');
     }
 
-    await this.eventRepository.outEvent(eventId, user.id);
+    await this.activityRepository.outActivity(activityId, user.id);
   }
 
-  async putUpdateEvent(
-    eventId: number,
-    payload: PutUpdateEventPayload,
+  async putUpdateActivity(
+    activityId: number,
+    payload: PutUpdateActivityPayload,
     user: UserBaseInfo,
-  ): Promise<EventDto> {
-    const event = await this.eventRepository.getEventById(eventId);
+  ): Promise<ActivityDto> {
+    const activity = await this.activityRepository.getActivityById(activityId);
 
-    if (!event) {
-      throw new NotFoundException('Event가 존재하지 않습니다.');
+    if (!activity) {
+      throw new NotFoundException('Activity가 존재하지 않습니다.');
     }
 
-    const updateData: UpdateEventData = {
+    const updateData: UpdateActivityData = {
       title: payload.title,
       description: payload.description,
       categoryId: payload.categoryId,
@@ -172,7 +136,7 @@ export class EventService {
       maxPeople: payload.maxPeople,
     };
 
-    const category = await this.eventRepository.getCategoryById(
+    const category = await this.activityRepository.getCategoryById(
       payload.categoryId,
     );
 
@@ -180,7 +144,7 @@ export class EventService {
       throw new NotFoundException('category가 존재하지 않습니다.');
     }
 
-    const cityValidity = await this.eventRepository.isCityIdsValid(
+    const cityValidity = await this.activityRepository.isCityIdsValid(
       payload.cityIds,
     );
 
@@ -188,7 +152,7 @@ export class EventService {
       throw new NotFoundException('존재하지 않는 city가 포함되어 있습니다.');
     }
 
-    if (event.startTime < new Date()) {
+    if (activity.startTime < new Date()) {
       throw new ConflictException('이미 시작된 이벤트는 수정할 수 없습니다.');
     }
 
@@ -202,30 +166,30 @@ export class EventService {
         '시작 시간이 현재 시간보다 빠르게 수정할 수 없습니다.',
       );
     }
-    const eventJoinCount =
-      await this.eventRepository.getEventJoinCount(eventId);
+    const activityJoinCount =
+      await this.activityRepository.getActivityJoinCount(activityId);
 
-    if (payload.maxPeople < eventJoinCount) {
+    if (payload.maxPeople < activityJoinCount) {
       throw new ConflictException(
         '정원을 현재 참가자 수보다 작게 수정할 수 없습니다.',
       );
     }
 
-    await this.checkHostPermissionOfEvent(eventId, user.id);
+    await this.checkHostPermissionOfActivity(activityId, user.id);
 
-    const updatedEvent = await this.eventRepository.updateEvent(
-      eventId,
+    const updatedActivity = await this.activityRepository.updateActivity(
+      activityId,
       updateData,
     );
 
-    return EventDto.from(updatedEvent);
+    return ActivityDto.from(updatedActivity);
   }
 
-  async patchUpdateEvent(
-    eventId: number,
-    payload: PatchUpdateEventPayload,
+  async patchUpdateActivity(
+    activityId: number,
+    payload: PatchUpdateActivityPayload,
     user: UserBaseInfo,
-  ): Promise<EventDto> {
+  ): Promise<ActivityDto> {
     if (payload.title === null) {
       throw new BadRequestException('title은 null이 될 수 없습니다.');
     }
@@ -248,15 +212,15 @@ export class EventService {
       throw new BadRequestException('maxPeople은 null이 될 수 없습니다.');
     }
 
-    await this.checkHostPermissionOfEvent(eventId, user.id);
+    await this.checkHostPermissionOfActivity(activityId, user.id);
 
-    const event = await this.eventRepository.getEventById(eventId);
+    const activity = await this.activityRepository.getActivityById(activityId);
 
-    if (!event) {
-      throw new NotFoundException('Event가 존재하지 않습니다.');
+    if (!activity) {
+      throw new NotFoundException('Activity가 존재하지 않습니다.');
     }
 
-    const updateData: UpdateEventData = {
+    const updateData: UpdateActivityData = {
       title: payload.title,
       description: payload.description,
       categoryId: payload.categoryId,
@@ -266,7 +230,7 @@ export class EventService {
       maxPeople: payload.maxPeople,
     };
 
-    if (event.startTime < new Date()) {
+    if (activity.startTime < new Date()) {
       throw new ConflictException('이미 시작된 이벤트는 수정할 수 없습니다.');
     }
 
@@ -282,7 +246,7 @@ export class EventService {
     if (
       !payload.startTime &&
       payload.endTime &&
-      payload.endTime < event.startTime
+      payload.endTime < activity.startTime
     ) {
       throw new ConflictException(
         '시작 시간이 현재 시간보다 빠르게 수정할 수 없습니다.',
@@ -291,23 +255,23 @@ export class EventService {
     if (
       payload.startTime &&
       !payload.endTime &&
-      payload.startTime > event.endTime
+      payload.startTime > activity.endTime
     ) {
       throw new ConflictException(
         '시작 시간이 현재 시간보다 빠르게 수정할 수 없습니다.',
       );
     }
-    const eventJoinCount =
-      await this.eventRepository.getEventJoinCount(eventId);
+    const activityJoinCount =
+      await this.activityRepository.getActivityJoinCount(activityId);
 
-    if (payload.maxPeople && payload.maxPeople < eventJoinCount) {
+    if (payload.maxPeople && payload.maxPeople < activityJoinCount) {
       throw new ConflictException(
         '정원을 현재 참가자 수보다 작게 수정할 수 없습니다.',
       );
     }
 
     if (payload.categoryId) {
-      const category = await this.eventRepository.getCategoryById(
+      const category = await this.activityRepository.getCategoryById(
         payload.categoryId,
       );
 
@@ -317,7 +281,7 @@ export class EventService {
     }
 
     if (payload.cityIds) {
-      const cityValidity = await this.eventRepository.isCityIdsValid(
+      const cityValidity = await this.activityRepository.isCityIdsValid(
         payload.cityIds,
       );
       if (!cityValidity) {
@@ -325,39 +289,40 @@ export class EventService {
       }
     }
 
-    const updatedEvent = await this.eventRepository.updateEvent(
-      eventId,
+    const updatedActivity = await this.activityRepository.updateActivity(
+      activityId,
       updateData,
     );
 
-    return EventDto.from(updatedEvent);
+    return ActivityDto.from(updatedActivity);
   }
 
-  async deleteEvent(eventId: number, user: UserBaseInfo): Promise<void> {
-    const event = await this.eventRepository.getEventById(eventId);
+  async deleteActivity(activityId: number, user: UserBaseInfo): Promise<void> {
+    const activity = await this.activityRepository.getActivityById(activityId);
 
-    if (!event) {
-      throw new NotFoundException('Event가 존재하지 않습니다.');
+    if (!activity) {
+      throw new NotFoundException('Activity가 존재하지 않습니다.');
     }
 
-    if (event.startTime < new Date()) {
+    if (activity.startTime < new Date()) {
       throw new ConflictException('이미 시작된 이벤트는 삭제할 수 없습니다.');
     }
 
-    await this.checkHostPermissionOfEvent(eventId, user.id);
+    await this.checkHostPermissionOfActivity(activityId, user.id);
 
-    await this.eventRepository.deleteEvent(eventId);
+    await this.activityRepository.deleteActivity(activityId);
   }
 
-  private async checkHostPermissionOfEvent(eventId: number, userId: number) {
-    const event = await this.eventRepository.getEventById(eventId);
+  private async checkHostPermissionOfActivity(activityId: number, userId: number) {
+    const activity = await this.activityRepository.getActivityById(activityId);
 
-    if (!event) {
-      throw new NotFoundException('Event가 존재하지 않습니다.');
+    if (!activity) {
+      throw new NotFoundException('Activity가 존재하지 않습니다.');
     }
 
-    if (event.hostId !== userId) {
+    if (activity.hostId !== userId) {
       throw new ForbiddenException('호스트가 아닙니다!');
     }
   }
 }
+  */

@@ -2,7 +2,7 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsInt, IsOptional } from 'class-validator';
 import { Type } from 'class-transformer';
 
-export class EventQuery {
+export class ActivityQuery {
   @IsOptional()
   @IsInt()
   @Type(() => Number)

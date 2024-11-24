@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../common/services/prisma.service';
 import { CreateActivityData } from './type/create-activity-data.type';
 import { ActivityData } from './type/activity-data.type';
-import { User, Activity, Category, City, ActivityJoin } from '@prisma/client';
+import { User, Activity } from '@prisma/client';
 import { ActivityQuery } from './query/activity.query';
 import { UpdateActivityData } from './type/update-activity-data.type';
 import { UserBaseInfo } from 'src/auth/type/user-base-info.type';
@@ -14,47 +14,34 @@ export class ActivityRepository {
   async createActivity(data: CreateActivityData): Promise<ActivityData> {
     return this.prisma.activity.create({
       data: {
-        hostId: data.hostId,
         title: data.title,
         description: data.description,
-        categoryId: data.categoryId,
-        startTime: data.startTime,
-        endTime: data.endTime,
-        maxPeople: data.maxPeople,
-        activityJoin: {
-          create: {
-            userId: data.hostId,
-          },
-        },
-        activityCity: {
-          create: data.cityIds.map((cityId) => ({
-            cityId: cityId,
+        locationName: data.locationName,
+        imageUrl: data.imageUrl,
+        activityKeywords: {
+          create: data.keywords.map((keywordId) => ({
+            keywordId: keywordId,
           })),
         },
+        userId: data.userId,
       },
       select: {
         id: true,
-        hostId: true,
         title: true,
         description: true,
-        categoryId: true,
-        activityCity: {
+        locationName: true,
+        imageUrl: true,
+        activityKeywords: {
           select: {
             id: true,
-            cityId: true,
+            keywordId: true,
           },
         },
-        club: {
-          select: {
-            id: true,
-          },
-        },
-        startTime: true,
-        endTime: true,
-        maxPeople: true,
+        userId: true,
       },
     });
   }
+
   async getMyActivitys(userId: number): Promise<ActivityData[]> {
     return this.prisma.activity.findMany({
       where: {
@@ -62,87 +49,43 @@ export class ActivityRepository {
       },
       select: {
         id: true,
-        hostId: true,
+        imageUrl: true,
         title: true,
         description: true,
-        categoryId: true,
-        activityCity: {
+        userId: true,
+        locationName: true,
+        activityKeywords: {
           select: {
             id: true,
-            cityId: true,
+            keywordId: true,
           },
         },
-        club: {
-          select: {
-            id: true,
-          },
-        },
-        startTime: true,
-        endTime: true,
-        maxPeople: true,
       },
     });
   }
+} /*
 
   async getUserById(userId: number): Promise<User | null> {
     return this.prisma.user.findUnique({
       where: {
-        id: userId,
-        deletedAt: null,
+        userId: userId,
       },
     });
   }
 
-  async getCategoryById(categoryId: number): Promise<Category | null> {
-    return this.prisma.category.findUnique({
-      where: {
-        id: categoryId,
-      },
-    });
-  }
 
-  async getCityById(cityId: number): Promise<City | null> {
-    return this.prisma.city.findUnique({
-      where: {
-        id: cityId,
-      },
-    });
-  }
 
-  async getCityIdsByActivityId(activityId: number): Promise<number[]> {
-    const activityCity = await this.prisma.activityCity.findMany({
-      where: {
-        activityId: activityId,
-      },
-    });
-
-    return activityCity.map((city) => city.cityId);
-  }
 
   async isActivityExist(id: number): Promise<boolean> {
     const activity = await this.prisma.activity.findUnique({
       where: {
-        id: id,
+        activityId: id,
       },
     });
 
     return !!activity;
   }
-  async isUserInClub(userId: number, clubId: number): Promise<boolean> {
-    const userInClub = await this.prisma.clubJoin.findUnique({
-      where: {
-        clubId_userId: {
-          clubId,
-          userId,
-        },
-        user: {
-          deletedAt: null,
-        },
-      },
-    });
-
-    return !!userInClub;
-  }
+ 
 
   async isUserJoinedActivity(
     userId: number,
@@ -356,3 +299,4 @@ export class ActivityRepository {
     ]);
   }
 }
+  */

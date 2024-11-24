@@ -10,29 +10,20 @@ import {
 } from 'class-validator';
 import { Type } from 'class-transformer';
 
-export class CreateEventPayload {
+export class CreateActivityPayload {
   @IsString()
   @ApiProperty({
-    description: '모임 이름',
+    description: '활동 이름',
     type: String,
   })
   title!: string;
 
   @IsInt({ each: true })
   @ApiProperty({
-    description: '도시 ID들',
+    description: '키워드 ID들',
     type: [Number],
   })
-  cityIds!: number[];
-
-  @IsOptional()
-  @IsInt()
-  @ApiPropertyOptional({
-    description: '클럽 ID',
-    type: Number,
-    nullable: true,
-  })
-  clubId?: number | null;
+  keywords!: number[];
 
   @IsString()
   @ApiProperty({
@@ -41,34 +32,19 @@ export class CreateEventPayload {
   })
   description!: string;
 
-  @IsInt()
+  @IsString()
   @ApiProperty({
-    description: '카테고리 ID',
-    type: Number,
+    description: '장소 이름',
+    type: String,
   })
-  categoryId!: number;
+  locationName!: string;
 
-  @IsDate()
-  @Type(() => Date)
-  @ApiProperty({
-    description: '시작 시간',
-    type: Date,
+  @IsString()
+  @IsOptional()
+  @ApiPropertyOptional({
+    description: '이미지 주소',
+    type: String,
+    nullable: true,
   })
-  startTime!: Date;
-
-  @IsDate()
-  @Type(() => Date)
-  @ApiProperty({
-    description: '종료 시간',
-    type: Date,
-  })
-  endTime!: Date;
-
-  @IsInt()
-  @Min(1)
-  @ApiProperty({
-    description: '최대 인원',
-    type: Number,
-  })
-  maxPeople!: number;
+  imageUrl?: string | null;
 }

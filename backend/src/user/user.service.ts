@@ -13,7 +13,7 @@ export class UserService {
   constructor(private readonly userRepository: UserRepository) {}
 
   async getUserInfoById(userId: number, user: UserBaseInfo): Promise<UserDto> {
-    if (userId !== user.userId) {
+    if (userId !== user.id) {
       throw new NotFoundException('해당 권한이 없습니다.');
     }
 
@@ -35,7 +35,7 @@ export class UserService {
       throw new BadRequestException('Birthday는 null이 될 수 없습니다.');
     }
 
-    if (userId !== user.userId) {
+    if (userId !== user.id) {
       throw new NotFoundException('해당 권한이 없습니다.');
     }
 

@@ -29,7 +29,7 @@ export class UserDto {
 
   static from(user: UserData): UserDto {
     return {
-      userId: user.userId,
+      userId: user.id,
       userName: user.userName,
       email: user.email,
       birthday: user.birthday,

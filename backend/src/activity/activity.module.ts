@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
-import { EventService } from './activity.service';
-import { EventController } from './activity.controller';
-import { EventRepository } from './activity.repository';
+import { ActivityService } from './activity.service';
+import { ActivityController } from './activity.controller';
+import { ActivityRepository } from './activity.repository';
 
 @Module({
-  controllers: [EventController],
-  providers: [EventService, EventRepository],
+  controllers: [ActivityController],
+  providers: [ActivityService, ActivityRepository],
 })
-export class EventModule {}
+export class ActivityModule {}

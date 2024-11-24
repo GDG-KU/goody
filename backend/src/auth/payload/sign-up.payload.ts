@@ -22,7 +22,7 @@ export class SignUpPayload {
     description: '이름',
     type: String,
   })
-  name!: string;
+  userName!: string;
 
   @IsOptional()
   @IsDate()
@@ -33,20 +33,4 @@ export class SignUpPayload {
     nullable: true,
   })
   birthday?: Date | null;
-
-  @IsOptional()
-  @IsInt()
-  @ApiProperty({
-    description: '도시 ID',
-    type: Number,
-    nullable: true,
-  })
-  cityId?: number | null;
-
-  @IsInt()
-  @ApiProperty({
-    description: '카테고리 ID',
-    type: Number,
-  })
-  categoryId!: number;
 }

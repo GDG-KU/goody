@@ -1,9 +1,7 @@
-export type UpdateEventData = {
+export type UpdateActivityData = {
   title?: string;
   description?: string;
-  categoryId?: number;
-  cityIds?: number[];
-  startTime?: Date;
-  endTime?: Date;
-  maxPeople?: number;
+  locationName?: string;
+  keywords?: number[];
+  imageUrl?: string | null;
 };

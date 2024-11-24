@@ -1,5 +1,5 @@
 export type UserData = {
-  userId: number;
+  id: number;
   userName: string;
   email: string;
   birthday: Date | null;

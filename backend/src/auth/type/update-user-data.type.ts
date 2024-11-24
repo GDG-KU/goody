@@ -1,9 +1,8 @@
 export type UpdateUserData = {
   email?: string;
   password?: string;
-  name?: string;
+  userName?: string;
   birthday?: Date | null;
-  categoryId?: number;
-  cityId?: number | null;
+  profileImage?: string | null;
   refreshToken?: string | null;
 };

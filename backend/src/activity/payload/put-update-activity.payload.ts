@@ -2,7 +2,7 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsDate, IsInt, IsOptional, IsString, Max, Min } from 'class-validator';
 import { Type } from 'class-transformer';
 
-export class PutUpdateEventPayload {
+export class PutUpdateActivityPayload {
   @IsString()
   @ApiProperty({
     description: '모임 이름',

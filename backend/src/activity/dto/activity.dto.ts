@@ -31,7 +31,7 @@ export class ActivityDto {
     description: '이미지 주소',
     type: Number,
   })
-  imageUrl!: string;
+  imageUrl!: string | null;
 
   @ApiProperty({
     description: '유저 ID',
@@ -41,19 +41,19 @@ export class ActivityDto {
 
   @ApiProperty({
     description: '키워드들',
-    type: [String],
+    type: [Number],
   })
-  keywords!: string[];
+  keywords!: number[];
 
   static from(activity: ActivityData): ActivityDto {
     return {
-      activityId: activity.activityId,
+      activityId: activity.id,
       userId: activity.userId,
       title: activity.title,
       description: activity.description,
       locationName: activity.locationName,
       imageUrl: activity.imageUrl,
-      keywords: activity.activityKeywords.map((keyword) => keyword.name),
+      keywords: activity.activityKeywords.map((keyword) => keyword.keywordId),
     };
   }
 

@@ -1,7 +1,7 @@
 import { PrismaService } from '../common/services/prisma.service';
 import { Injectable } from '@nestjs/common';
 import { UserBaseInfo } from './type/user-base-info.type';
-import { Category, City } from '@prisma/client';
+import { Keyword } from '@prisma/client';
 import { SignUpData } from './type/sign-up-data.type';
 import { UpdateUserData } from './type/update-user-data.type';
 
@@ -14,19 +14,16 @@ export class AuthRepository {
       data: {
         email: data.email,
         password: data.password,
-        name: data.name,
+        userName: data.userName,
         birthday: data.birthday,
-        categoryId: data.categoryId,
-        cityId: data.cityId,
       },
       select: {
         id: true,
         email: true,
         password: true,
-        name: true,
+        userName: true,
         birthday: true,
-        categoryId: true,
-        cityId: true,
+        profileImage: true,
         refreshToken: true,
       },
     });
@@ -40,20 +37,18 @@ export class AuthRepository {
       data: {
         email: data.email,
         password: data.password,
-        name: data.name,
+        userName: data.userName,
         birthday: data.birthday,
-        categoryId: data.categoryId,
-        cityId: data.cityId,
+        profileImage: data.profileImage,
         refreshToken: data.refreshToken,
       },
       select: {
         id: true,
         email: true,
         password: true,
-        name: true,
+        userName: true,
         birthday: true,
-        categoryId: true,
-        cityId: true,
+        profileImage: true,
         refreshToken: true,
       },
     });
@@ -63,16 +58,14 @@ export class AuthRepository {
     return this.prisma.user.findUnique({
       where: {
         id: id,
-        deletedAt: null,
       },
       select: {
         id: true,
         email: true,
         password: true,
-        name: true,
+        userName: true,
         birthday: true,
-        categoryId: true,
-        cityId: true,
+        profileImage: true,
         refreshToken: true,
       },
     });
@@ -82,31 +75,21 @@ export class AuthRepository {
     return this.prisma.user.findUnique({
       where: {
         email,
-        deletedAt: null,
       },
       select: {
         id: true,
         email: true,
         password: true,
-        name: true,
+        userName: true,
         birthday: true,
-        categoryId: true,
-        cityId: true,
+        profileImage: true,
         refreshToken: true,
       },
     });
   }
 
-  async getCategoryById(id: number): Promise<Category | null> {
-    return this.prisma.category.findUnique({
-      where: {
-        id,
-      },
-    });
-  }
-
-  async getCityById(id: number): Promise<City | null> {
-    return this.prisma.city.findUnique({
+  async getKeywordById(id: number): Promise<Keyword | null> {
+    return this.prisma.keyword.findUnique({
       where: {
         id,
       },

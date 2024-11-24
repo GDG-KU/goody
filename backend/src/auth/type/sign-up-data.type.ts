@@ -1,8 +1,6 @@
 export type SignUpData = {
   email: string;
   password: string;
-  name: string;
+  userName: string;
   birthday?: Date | null;
-  categoryId: number;
-  cityId?: number | null;
 };

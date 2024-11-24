@@ -2,7 +2,7 @@ import { IsDate, IsInt, IsOptional, IsString, Max, Min } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 
-export class PatchUpdateEventPayload {
+export class PatchUpdateActivityPayload {
   @IsOptional()
   @IsString()
   @ApiPropertyOptional({

@@ -1,17 +1,12 @@
-export type EventData = {
+export type ActivityData = {
   id: number;
-  hostId: number;
+  userId: number;
   title: string;
   description: string;
-  categoryId: number;
-  startTime: Date;
-  endTime: Date;
-  maxPeople: number;
-  eventCity: {
+  locationName: string;
+  imageUrl: string | null;
+  activityKeywords: {
     id: number;
-    cityId: number;
+    keywordId: number;
   }[];
-  club: {
-    id: number;
-  } | null;
 };

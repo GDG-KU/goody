@@ -12,7 +12,7 @@ export class UserRepository {
   async getUserById(userId: number): Promise<User | null> {
     return this.prisma.user.findFirst({
       where: {
-        userId: userId,
+        id: userId,
       },
     });
   }
@@ -39,10 +39,10 @@ export class UserRepository {
   async getUserInfoById(userId: number): Promise<UserData | null> {
     return this.prisma.user.findUnique({
       where: {
-        userId: userId,
+        id: userId,
       },
       select: {
-        userId: true,
+        id: true,
         email: true,
         userName: true,
         birthday: true,
@@ -54,7 +54,7 @@ export class UserRepository {
   async updateUser(userId: number, data: UpdateUserData): Promise<UserData> {
     return this.prisma.user.update({
       where: {
-        userId: userId,
+        id: userId,
       },
       data: {
         email: data.email,
@@ -63,7 +63,7 @@ export class UserRepository {
         profileImage: data.profileImage,
       },
       select: {
-        userId: true,
+        id: true,
         email: true,
         userName: true,
         birthday: true,
