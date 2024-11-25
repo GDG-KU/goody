@@ -7,6 +7,7 @@ import { UserRepository } from './user.repository';
 import { UserDto } from './dto/user.dto';
 import { UserBaseInfo } from 'src/auth/type/user-base-info.type';
 import { PatchUpdateUserPayload } from './payload/patch-update-user.payload';
+import { User } from '@prisma/client';
 
 @Injectable()
 export class UserService {
@@ -65,5 +66,18 @@ export class UserService {
     );
 
     return UserDto.from(updatedUser);
+  }
+
+  async updateProfileImage(
+    user: UserBaseInfo,
+    file: Express.Multer.File,
+  ): Promise<void> {
+    if (!file) {
+      throw new BadRequestException('프로필 이미지를 업로드하세요.');
+    }
+
+    const imageUrl = `/uploads/profile-images/${file.filename}`;
+
+    await this.userRepository.updateProfileImage(user.id, imageUrl);
   }
 }

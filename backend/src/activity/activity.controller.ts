@@ -79,7 +79,6 @@ export class ActivityController {
     @Body() createActivityPayload: CreateActivityPayload,
     @CurrentUser() user: UserBaseInfo,
   ) {
-    console.log('Received Payload:', createActivityPayload);
     const imageUrl = `/uploads/activity-images/${file.filename}`;
     return this.activityService.createActivity(
       createActivityPayload,
