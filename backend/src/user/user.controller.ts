@@ -14,9 +14,11 @@ import {
 import { UserService } from './user.service';
 import {
   ApiBearerAuth,
+  ApiBody,
   ApiNoContentResponse,
   ApiOkResponse,
   ApiOperation,
+  ApiConsumes,
 } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/guard/jwt-auth.guard';
 import { UserDto } from './dto/user.dto';
@@ -29,6 +31,7 @@ import {
   editFileName,
   imageFileFilter,
 } from 'src/common/utils/file-upload.utils';
+import { ProfileImageUpdatePayload } from './payload/profile-update-image-user.payload';
 import { UserData } from './type/user-data.type';
 @Controller('users')
 export class UserController {
@@ -68,11 +71,14 @@ export class UserController {
       fileFilter: imageFileFilter,
     }),
   )
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({ type: ProfileImageUpdatePayload })
   @ApiOkResponse({ type: UserDto })
   async updateProfileImage(
     @UploadedFile() file: Express.Multer.File,
     @CurrentUser() user: UserBaseInfo,
   ): Promise<void> {
-    await this.userService.updateProfileImage(user, file);
+    const imageUrl = `/uploads/profile-images/${file.filename}`;
+    await this.userService.updateProfileImage(user, file, imageUrl);
   }
 }
