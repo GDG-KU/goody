@@ -57,6 +57,18 @@ export class ActivityController {
   ): Promise<ActivityListDto> {
     return this.eventService.getMyActivitys(user);
   }
+  @Patch(':activityId')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Patch로 activity 수정합니다' })
+  @ApiOkResponse({ type: ActivityDto })
+  async patchUpdateActivity(
+    @Param('activityId', ParseIntPipe) activityId: number,
+    @Body() payload: PatchUpdateActivityPayload,
+    @CurrentUser() user: UserBaseInfo,
+  ): Promise<ActivityDto> {
+    return this.eventService.patchUpdateActivity(activityId, payload, user);
+  }
   /*
   @Get(':eventId')
   @ApiOperation({ summary: '모임 상세 정보를 가져옵니다' })
