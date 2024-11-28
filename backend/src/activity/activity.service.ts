@@ -42,6 +42,57 @@ export class ActivityService {
 
     return ActivityListDto.from(activitys);
   }
+
+  async patchUpdateActivity(
+    activityId: number,
+    payload: PatchUpdateActivityPayload,
+    user: UserBaseInfo,
+  ): Promise<ActivityDto> {
+    const data = this.validateNullOf(payload);
+
+    const activity = await this.activityRepository.findActivityById(activityId);
+
+    if (!activity) {
+      throw new NotFoundException('Activity를 찾을 수 없습니다.');
+    }
+    if (activity.userId !== user.id) {
+      throw new ForbiddenException('올린 본인만 수정할 수 있습니다.');
+    }
+    if (payload.keywords) {
+      const keywords = await this.activityRepository.findKeywordsByIds(payload.keywords);
+      if(keywords.length !== payload.keywords.length) {
+        throw new NotFoundException('존재하지 않는 keyword가 포함되어 있습니다.');
+      }
+    }
+    /* 일단 이정도만 할께 더 생각이 안난다 딱히 제약조건이랄게 좀 적어서 event에비해서*/
+    const updatedActivity = await this.activityRepository.updateActivity(activityId, data);
+
+    return ActivityDto.from(updatedActivity);
+  }
+
+  private validateNullOf(payload: PatchUpdateActivityPayload): UpdateActivityData {
+    if (payload.title === null) {
+      throw new BadRequestException('title은 null이 될 수 없습니다.');
+    }
+    if (payload.description === null) {
+      throw new BadRequestException('description은 null이 될 수 없습니다.');
+    }
+    if (payload.locationName === null) {
+      throw new BadRequestException('locationName은 null이 될 수 없습니다.');
+    }
+    if (payload.keywords === null) {
+      throw new BadRequestException('keywords은 null이 될 수 없습니다.');
+    }
+
+    return {
+      title: payload.title,
+      description: payload.description,
+      locationName: payload.locationName,
+      keywords: payload.keywords,
+      imageUrl: payload.imageUrl, // imageUrl은 null 허용
+    }; 
+  }
+  /* 추가적인 의문사항 : 어차피 이미지 올리는 거니까 url이 하자있을 확률은 없겠지? */
 }
 /*
   async getActivityByActivityId(activityId: number): Promise<ActivityDto> {
