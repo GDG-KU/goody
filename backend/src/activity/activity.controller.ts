@@ -97,7 +97,6 @@ export class ActivityController {
   ): Promise<ActivityListDto> {
     return this.activityService.getMyActivitys(user);
   }
-
   @Get(':activityId/recents')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
@@ -120,77 +119,16 @@ export class ActivityController {
   ): Promise<ActivityDto> {
     return this.activityService.getActivityByActivityId(activityId, user);
   }
-
-  /*
-
-  @Get()
-  @ApiOperation({ summary: '여러 모임 정보를 가져옵니다' })
-  @ApiOkResponse({ type: ActivityListDto })
-  async getActivitys(@Query() query: ActivityQuery): Promise<ActivityListDto> {
-    return this.eventService.getActivitys(query);
-  }
-
-  @Post(':eventId/join')
+  @Patch(':activityId')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  @ApiOperation({ summary: '모임에 참가합니다' })
-  @ApiNoContentResponse()
-  async joinActivity(
-    @Param('eventId', ParseIntPipe) eventId: number,
-    @CurrentUser() user: UserBaseInfo,
-  ): Promise<void> {
-    return this.eventService.joinActivity(eventId, user);
-  }
-
-  @Post(':eventId/out')
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
-  @ApiOperation({ summary: '유저를 event에서 내보냅니다.' })
-  @ApiNoContentResponse()
-  async outActivity(
-    @Param('eventId', ParseIntPipe) eventId: number,
-    @CurrentUser() user: UserBaseInfo,
-  ): Promise<void> {
-    return this.eventService.outActivity(eventId, user);
-  }
-
-  @Patch(':eventId')
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
-  @ApiOperation({ summary: '모임을 수정합니다' })
+  @ApiOperation({ summary: 'Patch로 activity 수정합니다' })
   @ApiOkResponse({ type: ActivityDto })
   async patchUpdateActivity(
-    @Param('eventId', ParseIntPipe) eventId: number,
+    @Param('activityId', ParseIntPipe) activityId: number,
     @Body() payload: PatchUpdateActivityPayload,
     @CurrentUser() user: UserBaseInfo,
   ): Promise<ActivityDto> {
-    return this.eventService.patchUpdateActivity(eventId, payload, user);
+    return this.activityService.patchUpdateActivity(activityId, payload, user);
   }
-
-  @Put(':eventId')
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
-  @ApiOperation({ summary: '모임을 수정합니다' })
-  @ApiOkResponse({ type: ActivityDto })
-  async putUpdateActivity(
-    @Param('eventId', ParseIntPipe) eventId: number,
-    @Body() payload: PutUpdateActivityPayload,
-    @CurrentUser() user: UserBaseInfo,
-  ): Promise<ActivityDto> {
-    return this.eventService.putUpdateActivity(eventId, payload, user);
-  }
-
-  @Delete(':eventId')
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
-  @HttpCode(204)
-  @ApiOperation({ summary: '모임을 삭제합니다.' })
-  @ApiNoContentResponse()
-  async deleteActivity(
-    @Param('eventId', ParseIntPipe) eventId: number,
-    @CurrentUser() user: UserBaseInfo,
-  ): Promise<void> {
-    return this.eventService.deleteActivity(eventId, user);
-  }
-*/
 }
