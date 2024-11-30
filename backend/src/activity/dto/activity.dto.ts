@@ -1,13 +1,14 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { ActivityData } from '../type/activity-data.type';
 import { IsOptional } from 'class-validator';
+import { ActivityLocationDto } from './activity-location.dto';
 
 export class ActivityDto {
   @ApiProperty({
-    description: '모임 ID',
+    description: 'activity ID',
     type: Number,
   })
-  activityId!: number;
+  id!: number;
 
   @ApiProperty({
     description: '제목',
@@ -20,12 +21,6 @@ export class ActivityDto {
     type: String,
   })
   description!: string;
-
-  @ApiProperty({
-    description: '장소 이름',
-    type: String,
-  })
-  locationName!: string;
 
   @ApiProperty({
     description: '이미지 주소',
@@ -45,14 +40,23 @@ export class ActivityDto {
   })
   keywords!: number[];
 
+  @ApiProperty({
+    description: '활동 위치',
+    type: ActivityLocationDto,
+    nullable: true,
+  })
+  location!: ActivityLocationDto | null;
+
   static from(activity: ActivityData): ActivityDto {
     return {
-      activityId: activity.id,
+      id: activity.id,
       userId: activity.userId,
       title: activity.title,
       description: activity.description,
-      locationName: activity.locationName,
       imageUrl: activity.imageUrl,
+      location: activity.activityLocation
+        ? ActivityLocationDto.from(activity.activityLocation)
+        : null,
       keywords: activity.activityKeywords.map((keyword) => keyword.keywordId),
     };
   }

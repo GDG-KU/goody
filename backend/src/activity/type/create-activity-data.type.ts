@@ -5,4 +5,6 @@ export type CreateActivityData = {
   keywords: number[];
   imageUrl: string;
   userId: number;
+  latitude: number;
+  longitude: number;
 };

@@ -1,3 +1,5 @@
+import { ActivityLocationData } from "./activity-location-data.type";
+
 export type ActivityData = {
   id: number;
   userId: number;
@@ -9,4 +11,5 @@ export type ActivityData = {
     id: number;
     keywordId: number;
   }[];
+  activityLocation: ActivityLocationData | null;
 };
