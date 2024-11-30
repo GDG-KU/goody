@@ -33,12 +33,6 @@ import { PutUpdateActivityPayload } from './payload/put-update-activity.payload'
 import { JwtAuthGuard } from 'src/auth/guard/jwt-auth.guard';
 import { CurrentUser } from 'src/auth/decorator/user.decorator';
 import { UserBaseInfo } from 'src/auth/type/user-base-info.type';
-import { FileInterceptor } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
-import {
-  editFileName,
-  imageFileFilter,
-} from 'src/common/utils/file-upload.utils';
 
 @Controller('activities')
 @ApiTags('Activity API')
@@ -98,5 +92,15 @@ export class ActivityController {
     @CurrentUser() user: UserBaseInfo,
   ): Promise<ActivityDto> {
     return this.activityService.patchUpdateActivity(activityId, payload, user);
+  }
+
+  @Get('nearest')
+  @ApiOperation({ summary: '가장 가까운 활동 4개를 가져옵니다' })
+  @ApiOkResponse({ type: ActivityListDto })
+  async getNearestActivitys(
+    @Param('longitude', ParseIntPipe) longitude: number,
+    @Param('latitude', ParseIntPipe) latitude: number,
+  ): Promise<ActivityListDto> {
+    return this.activityService.getNearestActivities(longitude, latitude);
   }
 }
