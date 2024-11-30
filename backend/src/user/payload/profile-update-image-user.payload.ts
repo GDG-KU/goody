@@ -14,9 +14,8 @@ import { Type } from 'class-transformer';
 
 export class ProfileImageUpdatePayload {
   @ApiProperty({
-    description: '이미지 파일',
+    description: '이미지 파일 url',
     type: 'string',
-    format: 'binary',
   })
-  image!: any;
+  image!: string;
 }

@@ -31,6 +31,9 @@ export class UserService {
     if (payload.birthday === null) {
       throw new BadRequestException('Birthday는 null이 될 수 없습니다.');
     }
+    if (payload.profileImage === null) {
+      throw new BadRequestException('ProfileImage는 null이 될 수 없습니다.');
+    }
 
     if (userId !== user.id) {
       throw new NotFoundException('해당 권한이 없습니다.');
@@ -70,13 +73,8 @@ export class UserService {
 
   async updateProfileImage(
     user: UserBaseInfo,
-    file: Express.Multer.File,
     imageUrl: string,
   ): Promise<void> {
-    if (!file) {
-      throw new BadRequestException('프로필 이미지를 업로드하세요.');
-    }
-
     await this.userRepository.updateProfileImage(user.id, imageUrl);
   }
 }

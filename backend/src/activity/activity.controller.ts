@@ -44,47 +44,15 @@ import {
 @ApiTags('Activity API')
 export class ActivityController {
   constructor(private readonly activityService: ActivityService) {}
-  /*
-  @Post()
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
-  @ApiOperation({ summary: '낭만 활동을 생성합니다' })
-  @ApiCreatedResponse({ type: ActivityDto })
-  async createActivity(
-    @Body() payload: CreateActivityPayload,
-    @CurrentUser() user: UserBaseInfo,
-  ): Promise<ActivityDto> {
-    return this.activityService.createActivity(payload, user);
-  }*/
 
   @Post()
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  @UseInterceptors(
-    FileInterceptor('image', {
-      storage: diskStorage({
-        destination: './uploads/activity-images',
-        filename: editFileName,
-      }),
-      fileFilter: imageFileFilter,
-    }),
-  )
-  @ApiConsumes('multipart/form-data')
-  @ApiBody({
-    description: '활동 생성 데이터',
-    type: CreateActivityPayload,
-  })
   async createActivity(
-    @UploadedFile() file: Express.Multer.File,
     @Body() createActivityPayload: CreateActivityPayload,
     @CurrentUser() user: UserBaseInfo,
   ) {
-    const imageUrl = `/uploads/activity-images/${file.filename}`;
-    return this.activityService.createActivity(
-      createActivityPayload,
-      imageUrl,
-      user,
-    );
+    return this.activityService.createActivity(createActivityPayload, user);
   }
 
   @Get('me')
