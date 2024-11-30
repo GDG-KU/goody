@@ -15,12 +15,18 @@ export class ActivityRepository {
       data: {
         title: data.title,
         description: data.description,
-        locationName: data.locationName,
         imageUrl: data.imageUrl,
+        locationName: data.locationName,
         activityKeywords: {
           create: data.keywords.map((keywordId) => ({
             keywordId: keywordId,
           })),
+        },
+        activityLocation: {
+          create: {
+            latitude: data.latitude,
+            longitude: data.longitude,
+          },
         },
         userId: data.userId,
       },
@@ -34,6 +40,13 @@ export class ActivityRepository {
           select: {
             id: true,
             keywordId: true,
+          },
+        },
+        activityLocation: {
+          select: {
+            activityId: true,
+            latitude: true,
+            longitude: true,
           },
         },
         userId: true,
@@ -59,6 +72,13 @@ export class ActivityRepository {
             keywordId: true,
           },
         },
+        activityLocation: {
+          select: {
+            activityId: true,
+            latitude: true,
+            longitude: true,
+          },
+        },
       },
     });
   }
@@ -82,9 +102,17 @@ export class ActivityRepository {
             keywordId: true,
           },
         },
+        activityLocation: {
+          select: {
+            activityId: true,
+            latitude: true,
+            longitude: true,
+          },
+        },
       },
     });
   }
+  //이거 한 트랜잭션으로 묶어야함
   async createRecentActivity(
     activityId: number,
     userId: number,
@@ -131,6 +159,7 @@ export class ActivityRepository {
                 keyword: true,
               },
             },
+            activityLocation: true,
           },
         },
       },
@@ -170,6 +199,15 @@ export class ActivityRepository {
               },
             }
           : undefined,
+        activityLocation:
+          data.latitude && data.longitude
+            ? {
+                update: {
+                  latitude: data.latitude,
+                  longitude: data.longitude,
+                },
+              }
+            : undefined,
       },
       select: {
         id: true,
@@ -182,6 +220,13 @@ export class ActivityRepository {
           select: {
             id: true,
             keywordId: true,
+          },
+        },
+        activityLocation: {
+          select: {
+            activityId: true,
+            latitude: true,
+            longitude: true,
           },
         },
       },

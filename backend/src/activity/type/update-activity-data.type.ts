@@ -4,4 +4,6 @@ export type UpdateActivityData = {
   locationName?: string;
   keywords?: number[];
   imageUrl?: string;
+  latitude?: number;
+  longitude?: number;
 };
