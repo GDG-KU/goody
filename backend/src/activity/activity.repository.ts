@@ -241,4 +241,50 @@ export class ActivityRepository {
       },
     });
   }
+
+  async getNearestActivities(
+    longitude: number,
+    latitude: number,
+  ): Promise<ActivityData[]> {
+    const distanceInDegrees = 0.00225;
+    const cosLatitude = Math.cos((latitude * Math.PI) / 180);
+    const longitudeDegreeRange = distanceInDegrees / cosLatitude;
+
+    return this.prisma.activity.findMany({
+      where: {
+        activityLocation: {
+          latitude: {
+            gte: latitude - distanceInDegrees,
+            lte: latitude + distanceInDegrees,
+          },
+          longitude: {
+            gte: longitude - longitudeDegreeRange,
+            lte: longitude + longitudeDegreeRange,
+          },
+        },
+      },
+      take: 3,
+      select: {
+        id: true,
+        title: true,
+        description: true,
+        locationName: true,
+        imageUrl: true,
+        userId: true,
+        activityKeywords: {
+          select: {
+            id: true,
+            keywordId: true,
+          },
+        },
+        activityLocation: {
+          select: {
+            activityId: true,
+            latitude: true,
+            longitude: true,
+          },
+        },
+      },
+    });
+  }
 }

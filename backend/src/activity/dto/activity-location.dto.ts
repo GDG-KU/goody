@@ -3,12 +3,6 @@ import { ActivityLocationData } from '../type/activity-location-data.type';
 
 export class ActivityLocationDto {
   @ApiProperty({
-    description: 'activity 장소 id',
-    type: Number,
-  })
-  id!: number;
-
-  @ApiProperty({
     description: 'activity의 id',
     type: Number,
   })
@@ -26,19 +20,11 @@ export class ActivityLocationDto {
   })
   longitude!: number;
 
-  @ApiProperty({
-    description: 'activity 장소 이름',
-    type: String,
-  })
-  name!: string;
-
   static from(location: ActivityLocationData): ActivityLocationDto {
     return {
-      id: location.id,
       activityId: location.activityId,
       latitude: location.latitude,
       longitude: location.longitude,
-      name: location.name,
     };
   }
 
