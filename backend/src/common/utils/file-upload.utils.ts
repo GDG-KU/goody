@@ -25,7 +25,7 @@ export const editFileName = (
   // 파일 확장자 추출
   const fileExtName = extname(file.originalname);
   // 고유한 랜덤 문자열 생성
-  const randomName = Array(4)
+  const randomName = Array(20)
     .fill(null)
     .map(() => Math.round(Math.random() * 16).toString(16))
     .join('');
