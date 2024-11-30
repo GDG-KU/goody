@@ -26,15 +26,6 @@ export class CreateActivityPayload {
     description: '키워드 ID들',
     type: [Number],
   })
-  @Transform(({ value }) => {
-    if (typeof value === 'string') {
-      return value.split(',').map((item) => parseInt(item.trim(), 10));
-    }
-    if (Array.isArray(value)) {
-      return value.map((item) => parseInt(item, 10));
-    }
-    return [];
-  })
   keywords!: number[];
 
   @IsString()
@@ -53,8 +44,7 @@ export class CreateActivityPayload {
 
   @ApiProperty({
     description: '이미지 파일',
-    type: 'string',
-    format: 'binary',
+    type: String,
   })
-  image!: any;
+  imageUrl!: string;
 }

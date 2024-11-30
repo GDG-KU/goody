@@ -25,12 +25,6 @@ import { UserDto } from './dto/user.dto';
 import { CurrentUser } from 'src/auth/decorator/user.decorator';
 import { UserBaseInfo } from 'src/auth/type/user-base-info.type';
 import { PatchUpdateUserPayload } from './payload/patch-update-user.payload';
-import { FileInterceptor } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
-import {
-  editFileName,
-  imageFileFilter,
-} from 'src/common/utils/file-upload.utils';
 import { ProfileImageUpdatePayload } from './payload/profile-update-image-user.payload';
 import { UserData } from './type/user-data.type';
 @Controller('users')
@@ -62,23 +56,11 @@ export class UserController {
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: '프로필 이미지 수정' })
-  @UseInterceptors(
-    FileInterceptor('profileImage', {
-      storage: diskStorage({
-        destination: './uploads/profile-images',
-        filename: editFileName,
-      }),
-      fileFilter: imageFileFilter,
-    }),
-  )
-  @ApiConsumes('multipart/form-data')
-  @ApiBody({ type: ProfileImageUpdatePayload })
   @ApiOkResponse({ type: UserDto })
   async updateProfileImage(
-    @UploadedFile() file: Express.Multer.File,
+    @Param('profileImage') imageUrl: string,
     @CurrentUser() user: UserBaseInfo,
   ): Promise<void> {
-    const imageUrl = `/uploads/profile-images/${file.filename}`;
-    await this.userService.updateProfileImage(user, file, imageUrl);
+    await this.userService.updateProfileImage(user, imageUrl);
   }
 }

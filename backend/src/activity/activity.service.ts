@@ -21,7 +21,6 @@ export class ActivityService {
 
   async createActivity(
     payload: CreateActivityPayload,
-    imageUrl: string,
     user: UserBaseInfo,
   ): Promise<ActivityDto> {
     const createData: CreateActivityData = {
@@ -30,7 +29,7 @@ export class ActivityService {
       description: payload.description,
       locationName: payload.locationName,
       keywords: payload.keywords,
-      imageUrl: imageUrl,
+      imageUrl: payload.imageUrl,
     };
     const checkKeyword = await this.activityRepository.checkKeywordIdsValid(
       payload.keywords,

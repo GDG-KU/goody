@@ -27,12 +27,20 @@ export class UserDto {
   })
   birthday!: Date | null;
 
+  @ApiProperty({
+    description: '프로필 이미지',
+    type: String,
+    nullable: true,
+  })
+  profileImage!: string | null;
+
   static from(user: UserData): UserDto {
     return {
       userId: user.id,
       userName: user.userName,
       email: user.email,
       birthday: user.birthday,
+      profileImage: user.profileImage,
     };
   }
 
