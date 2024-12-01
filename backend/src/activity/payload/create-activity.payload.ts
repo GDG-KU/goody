@@ -2,8 +2,10 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
   IsArray,
   IsDate,
+  IsDecimal,
   IsIn,
   IsInt,
+  IsNumber,
   IsOptional,
   IsString,
   Max,
@@ -42,9 +44,24 @@ export class CreateActivityPayload {
   })
   locationName!: string;
 
+  @IsString()
   @ApiProperty({
     description: '이미지 파일',
     type: String,
   })
   imageUrl!: string;
+
+  @IsDecimal()
+  @ApiProperty({
+    description: '위도',
+    type: Number,
+  })
+  latitude!: number;
+
+  @IsDecimal()
+  @ApiProperty({
+    description: '경도',
+    type: Number,
+  })
+  longitude!: number;
 }
