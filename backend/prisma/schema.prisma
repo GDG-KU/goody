@@ -42,7 +42,7 @@ model Activity {
 
   activityKeywords ActivityKeyword[]
   recentActivities RecentActivity[]
-  activityLocation ActivityLocation[]
+  activityLocation ActivityLocation?
 
   @@unique([id, locationName])
 
@@ -71,13 +71,11 @@ model ActivityKeyword {
 }
 
 model ActivityLocation {
-  id Int    @id  @default(autoincrement())
-  activityId Int    @map("activity_id")
-  name       String
+  activityId  Int      @id @map("activity_id")
   latitude   Float
   longitude  Float
 
-  activity Activity @relation(fields: [activityId, name], references: [id, locationName])
+  activity    Activity @relation(fields: [activityId], references: [id])
 
 
   @@map("activity_location")

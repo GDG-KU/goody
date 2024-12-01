@@ -5,7 +5,7 @@ import { ActivityData } from './type/activity-data.type';
 import { User, Activity, ActivityKeyword } from '@prisma/client';
 import { ActivityQuery } from './query/activity.query';
 import { UpdateActivityData } from './type/update-activity-data.type';
-
+import { ActivityLocationQuery } from './query/activity-location.query';
 @Injectable()
 export class ActivityRepository {
   constructor(private readonly prisma: PrismaService) {}
@@ -15,12 +15,18 @@ export class ActivityRepository {
       data: {
         title: data.title,
         description: data.description,
-        locationName: data.locationName,
         imageUrl: data.imageUrl,
+        locationName: data.locationName,
         activityKeywords: {
           create: data.keywords.map((keywordId) => ({
             keywordId: keywordId,
           })),
+        },
+        activityLocation: {
+          create: {
+            latitude: data.latitude,
+            longitude: data.longitude,
+          },
         },
         userId: data.userId,
       },
@@ -34,6 +40,13 @@ export class ActivityRepository {
           select: {
             id: true,
             keywordId: true,
+          },
+        },
+        activityLocation: {
+          select: {
+            activityId: true,
+            latitude: true,
+            longitude: true,
           },
         },
         userId: true,
@@ -59,6 +72,13 @@ export class ActivityRepository {
             keywordId: true,
           },
         },
+        activityLocation: {
+          select: {
+            activityId: true,
+            latitude: true,
+            longitude: true,
+          },
+        },
       },
     });
   }
@@ -82,9 +102,17 @@ export class ActivityRepository {
             keywordId: true,
           },
         },
+        activityLocation: {
+          select: {
+            activityId: true,
+            latitude: true,
+            longitude: true,
+          },
+        },
       },
     });
   }
+  //이거 한 트랜잭션으로 묶어야함
   async createRecentActivity(
     activityId: number,
     userId: number,
@@ -131,6 +159,7 @@ export class ActivityRepository {
                 keyword: true,
               },
             },
+            activityLocation: true,
           },
         },
       },
@@ -170,6 +199,15 @@ export class ActivityRepository {
               },
             }
           : undefined,
+        activityLocation:
+          data.latitude && data.longitude
+            ? {
+                update: {
+                  latitude: data.latitude,
+                  longitude: data.longitude,
+                },
+              }
+            : undefined,
       },
       select: {
         id: true,
@@ -184,6 +222,13 @@ export class ActivityRepository {
             keywordId: true,
           },
         },
+        activityLocation: {
+          select: {
+            activityId: true,
+            latitude: true,
+            longitude: true,
+          },
+        },
       },
     });
   }
@@ -192,6 +237,51 @@ export class ActivityRepository {
       where: {
         id: {
           in: ids,
+        },
+      },
+    });
+  }
+
+  async getNearestActivities(
+    query: ActivityLocationQuery,
+  ): Promise<ActivityData[]> {
+    const distanceInDegrees = 0.00225;
+    const cosLatitude = Math.cos((query.latitude * Math.PI) / 180);
+    const longitudeDegreeRange = distanceInDegrees / cosLatitude;
+
+    return this.prisma.activity.findMany({
+      where: {
+        activityLocation: {
+          latitude: {
+            gte: query.latitude - distanceInDegrees,
+            lte: query.latitude + distanceInDegrees,
+          },
+          longitude: {
+            gte: query.longitude - longitudeDegreeRange,
+            lte: query.longitude + longitudeDegreeRange,
+          },
+        },
+      },
+      take: 3,
+      select: {
+        id: true,
+        title: true,
+        description: true,
+        locationName: true,
+        imageUrl: true,
+        userId: true,
+        activityKeywords: {
+          select: {
+            id: true,
+            keywordId: true,
+          },
+        },
+        activityLocation: {
+          select: {
+            activityId: true,
+            latitude: true,
+            longitude: true,
+          },
         },
       },
     });
