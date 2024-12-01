@@ -79,10 +79,10 @@ async function bootstrap() {
 
   // Swagger 설정을 라우트 설정 전에 배치
   const config = new DocumentBuilder()
-    .setTitle('Eventory Server')
-    .setDescription('Eventory API description')
+    .setTitle('Goody Server')
+    .setDescription('Goody API description')
     .setVersion('1.0')
-    .addTag('Eventory')
+    .addTag('Goody')
     .addBearerAuth()
     .build();
 
