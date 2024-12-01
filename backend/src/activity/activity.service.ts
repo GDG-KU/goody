@@ -10,6 +10,7 @@ import { CreateActivityPayload } from './payload/create-activity.payload';
 import { ActivityDto, ActivityListDto } from './dto/activity.dto';
 import { CreateActivityData } from './type/create-activity-data.type';
 import { ActivityQuery } from './query/activity.query';
+import { ActivityLocationQuery } from './query/activity-location.query';
 import { UpdateActivityData } from './type/update-activity-data.type';
 import { PatchUpdateActivityPayload } from './payload/patch-update-activity.payload';
 import { PutUpdateActivityPayload } from './payload/put-update-activity.payload';
@@ -128,13 +129,10 @@ export class ActivityService {
   }
 
   async getNearestActivities(
-    longitude: number,
-    latitude: number,
+    query: ActivityLocationQuery,
   ): Promise<ActivityListDto> {
-    const activities = await this.activityRepository.getNearestActivities(
-      longitude,
-      latitude,
-    );
+    const activities =
+      await this.activityRepository.getNearestActivities(query);
 
     return ActivityListDto.from(activities);
   }
