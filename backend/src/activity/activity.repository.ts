@@ -5,7 +5,7 @@ import { ActivityData } from './type/activity-data.type';
 import { User, Activity, ActivityKeyword } from '@prisma/client';
 import { ActivityQuery } from './query/activity.query';
 import { UpdateActivityData } from './type/update-activity-data.type';
-
+import { ActivityLocationQuery } from './query/activity-location.query';
 @Injectable()
 export class ActivityRepository {
   constructor(private readonly prisma: PrismaService) {}
@@ -243,23 +243,22 @@ export class ActivityRepository {
   }
 
   async getNearestActivities(
-    longitude: number,
-    latitude: number,
+    query: ActivityLocationQuery,
   ): Promise<ActivityData[]> {
     const distanceInDegrees = 0.00225;
-    const cosLatitude = Math.cos((latitude * Math.PI) / 180);
+    const cosLatitude = Math.cos((query.latitude * Math.PI) / 180);
     const longitudeDegreeRange = distanceInDegrees / cosLatitude;
 
     return this.prisma.activity.findMany({
       where: {
         activityLocation: {
           latitude: {
-            gte: latitude - distanceInDegrees,
-            lte: latitude + distanceInDegrees,
+            gte: query.latitude - distanceInDegrees,
+            lte: query.latitude + distanceInDegrees,
           },
           longitude: {
-            gte: longitude - longitudeDegreeRange,
-            lte: longitude + longitudeDegreeRange,
+            gte: query.longitude - longitudeDegreeRange,
+            lte: query.longitude + longitudeDegreeRange,
           },
         },
       },
