@@ -40,8 +40,9 @@ export class PatchUpdateUserPayload {
   @IsOptional()
   @IsString()
   @ApiPropertyOptional({
-    description: '프로필 이미지',
-    type: String,
+    description: '프로필 이미지 파일',
+    type: 'string',
+    format: 'binary',
     nullable: true,
   })
   profileImage?: string | null;

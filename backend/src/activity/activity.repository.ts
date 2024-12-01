@@ -5,7 +5,6 @@ import { ActivityData } from './type/activity-data.type';
 import { User, Activity, ActivityKeyword } from '@prisma/client';
 import { ActivityQuery } from './query/activity.query';
 import { UpdateActivityData } from './type/update-activity-data.type';
-import { UserBaseInfo } from 'src/auth/type/user-base-info.type';
 
 @Injectable()
 export class ActivityRepository {
@@ -63,7 +62,91 @@ export class ActivityRepository {
       },
     });
   }
+  async getActivityByActivityId(
+    activityId: number,
+  ): Promise<ActivityData | null> {
+    return this.prisma.activity.findUnique({
+      where: {
+        id: activityId,
+      },
+      select: {
+        id: true,
+        imageUrl: true,
+        title: true,
+        description: true,
+        userId: true,
+        locationName: true,
+        activityKeywords: {
+          select: {
+            id: true,
+            keywordId: true,
+          },
+        },
+      },
+    });
+  }
+  async createRecentActivity(
+    activityId: number,
+    userId: number,
+  ): Promise<void> {
+    await this.prisma.recentActivity.upsert({
+      where: {
+        userId_activityId: {
+          userId,
+          activityId,
+        },
+      },
+      update: {
+        viewedAt: new Date(),
+      },
+      create: {
+        userId,
+        activityId,
+        viewedAt: new Date(),
+      },
+    });
+  }
 
+  async checkKeywordIdsValid(keywordIds: number[]): Promise<boolean> {
+    const keyword = await this.prisma.keyword.findMany({
+      where: {
+        id: {
+          in: keywordIds,
+        },
+      },
+    });
+    return keyword.length === keywordIds.length;
+  }
+
+  async getRecentActivities(userId: number): Promise<ActivityData[]> {
+    const recentActivities = await this.prisma.recentActivity.findMany({
+      where: { userId },
+      orderBy: { viewedAt: 'desc' },
+      take: 3,
+      include: {
+        activity: {
+          include: {
+            activityKeywords: {
+              include: {
+                keyword: true,
+              },
+            },
+          },
+        },
+      },
+    });
+    return recentActivities.map((recent) => recent.activity);
+  }
+
+  async updateActivityImage(
+    activityId: number,
+    imageUrl: string,
+  ): Promise<void> {
+    await this.prisma.activity.update({
+      where: { id: activityId },
+      data: { imageUrl },
+    });
+  }
   async updateActivity(
     id: number,
     data: UpdateActivityData,
@@ -104,29 +187,6 @@ export class ActivityRepository {
       },
     });
   }
-
-  async findActivityById(id: number): Promise<ActivityData | null> {
-    return this.prisma.activity.findUnique({
-      where: {
-        id,
-      },
-      select: {
-        id: true,
-        userId: true,
-        title: true,
-        description: true,
-        locationName: true,
-        activityKeywords: {
-          select: {
-            id: true,
-            keywordId: true,
-          },
-        },
-        imageUrl: true,
-      },
-    });
-  }
-
   async findKeywordsByIds(ids: number[]): Promise<ActivityKeyword[]> {
     return this.prisma.activityKeyword.findMany({
       where: {

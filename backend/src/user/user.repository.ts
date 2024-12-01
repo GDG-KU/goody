@@ -71,4 +71,15 @@ export class UserRepository {
       },
     });
   }
+
+  async updateProfileImage(userId: number, imageUrl: string): Promise<void> {
+    await this.prisma.user.update({
+      where: {
+        id: userId,
+      },
+      data: {
+        profileImage: imageUrl,
+      },
+    });
+  }
 }
