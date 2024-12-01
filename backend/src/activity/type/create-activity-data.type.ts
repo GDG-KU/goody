@@ -3,6 +3,6 @@ export type CreateActivityData = {
   description: string;
   locationName: string;
   keywords: number[];
-  imageUrl?: string | null;
+  imageUrl: string;
   userId: number;
 };

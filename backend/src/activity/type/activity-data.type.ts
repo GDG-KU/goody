@@ -4,7 +4,7 @@ export type ActivityData = {
   title: string;
   description: string;
   locationName: string;
-  imageUrl: string | null;
+  imageUrl: string;
   activityKeywords: {
     id: number;
     keywordId: number;

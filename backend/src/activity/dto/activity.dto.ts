@@ -29,9 +29,9 @@ export class ActivityDto {
 
   @ApiProperty({
     description: '이미지 주소',
-    type: Number,
+    type: String,
   })
-  imageUrl!: string | null;
+  imageUrl!: string;
 
   @ApiProperty({
     description: '유저 ID',
@@ -57,8 +57,8 @@ export class ActivityDto {
     };
   }
 
-  static fromArray(activitys: ActivityData[]): ActivityDto[] {
-    return activitys.map((activity) => this.from(activity));
+  static fromArray(activities: ActivityData[]): ActivityDto[] {
+    return activities.map((activity) => this.from(activity));
   }
 }
 
@@ -67,11 +67,11 @@ export class ActivityListDto {
     description: '모임 목록',
     type: [ActivityDto],
   })
-  activitys!: ActivityDto[];
+  activities!: ActivityDto[];
 
-  static from(activitys: ActivityData[]): ActivityListDto {
+  static from(activities: ActivityData[]): ActivityListDto {
     return {
-      activitys: ActivityDto.fromArray(activitys),
+      activities: ActivityDto.fromArray(activities),
     };
   }
 }

@@ -7,16 +7,13 @@ import { UserRepository } from './user.repository';
 import { UserDto } from './dto/user.dto';
 import { UserBaseInfo } from 'src/auth/type/user-base-info.type';
 import { PatchUpdateUserPayload } from './payload/patch-update-user.payload';
+import { User } from '@prisma/client';
 
 @Injectable()
 export class UserService {
   constructor(private readonly userRepository: UserRepository) {}
 
-  async getUserInfoById(userId: number, user: UserBaseInfo): Promise<UserDto> {
-    if (userId !== user.id) {
-      throw new NotFoundException('해당 권한이 없습니다.');
-    }
-
+  async getUserInfoById(user: UserBaseInfo): Promise<UserDto> {
     return UserDto.from(user);
   }
 
@@ -33,6 +30,9 @@ export class UserService {
     }
     if (payload.birthday === null) {
       throw new BadRequestException('Birthday는 null이 될 수 없습니다.');
+    }
+    if (payload.profileImage === null) {
+      throw new BadRequestException('ProfileImage는 null이 될 수 없습니다.');
     }
 
     if (userId !== user.id) {
@@ -69,5 +69,12 @@ export class UserService {
     );
 
     return UserDto.from(updatedUser);
+  }
+
+  async updateProfileImage(
+    user: UserBaseInfo,
+    imageUrl: string,
+  ): Promise<void> {
+    await this.userRepository.updateProfileImage(user.id, imageUrl);
   }
 }

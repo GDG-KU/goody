@@ -8,6 +8,7 @@ COPY package.json yarn.lock ./
 
 RUN yarn install
 
+
 COPY . .
 
 RUN yarn global add dotenv-cli
