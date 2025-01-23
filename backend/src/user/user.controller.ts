@@ -10,6 +10,7 @@ import {
   Post,
   UseInterceptors,
   UploadedFile,
+  Patch,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import {
@@ -40,7 +41,7 @@ export class UserController {
     return this.userService.getUserInfoById(user);
   }
 
-  @Post(':userId')
+  @Patch()
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: '유저 정보 수정' })
