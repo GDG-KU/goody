@@ -59,7 +59,8 @@ export class ActivityController {
   ): Promise<ActivityListDto> {
     return this.activityService.getMyActivitys(user);
   }
-  @Get(':activityId/recents')
+
+  @Get('recents')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: '최근 활동 3개를 가져옵니다' })
@@ -68,6 +69,15 @@ export class ActivityController {
     @CurrentUser() user: UserBaseInfo,
   ): Promise<ActivityListDto> {
     return this.activityService.getRecentActivities(user);
+  }
+
+  @Get('nearest')
+  @ApiOperation({ summary: '가장 가까운 활동 4개를 가져옵니다' })
+  @ApiOkResponse({ type: ActivityListDto })
+  async getNearestActivitys(
+    @Query() query: ActivityLocationQuery,
+  ): Promise<ActivityListDto> {
+    return this.activityService.getNearestActivities(query);
   }
 
   @Get(':activityId')
@@ -92,14 +102,5 @@ export class ActivityController {
     @CurrentUser() user: UserBaseInfo,
   ): Promise<ActivityDto> {
     return this.activityService.patchUpdateActivity(activityId, payload, user);
-  }
-
-  @Get('nearest')
-  @ApiOperation({ summary: '가장 가까운 활동 4개를 가져옵니다' })
-  @ApiOkResponse({ type: ActivityListDto })
-  async getNearestActivitys(
-    @Query() query: ActivityLocationQuery,
-  ): Promise<ActivityListDto> {
-    return this.activityService.getNearestActivities(query);
   }
 }

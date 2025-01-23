@@ -5,12 +5,13 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 datasource db {
-  provider = "postgresql" // 실제 사용하는 데이터베이스에 맞게 변경하세요.
+  provider = "postgresql" 
   url      = env("DATABASE_URL")
 }
 
 generator client {
   provider = "prisma-client-js"
+  
 }
 
 model User {
@@ -48,6 +49,7 @@ model Activity {
 
   @@map("activity")
 }
+
 
 model Keyword {
   id   Int    @id  @default(autoincrement())

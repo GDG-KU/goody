@@ -1,6 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { ActivityData } from '../type/activity-data.type';
-import { IsOptional } from 'class-validator';
 import { ActivityLocationDto } from './activity-location.dto';
 
 export class ActivityDto {
@@ -40,7 +39,7 @@ export class ActivityDto {
   })
   keywords!: number[];
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     description: '활동 위치',
     type: ActivityLocationDto,
     nullable: true,
