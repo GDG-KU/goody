@@ -5,7 +5,7 @@ import { configModule } from './modules/config.module';
 import { LoggerMiddleware } from '../common/middlewares/logger.middleware';
 import { ActivityModule } from '../activity/activity.module';
 import { CommonModule } from '../common/common.module';
-import { AwsS3Module } from 'src/common/aws/aws.module';
+import { GoogleCloudModule } from 'src/common/google-cloud/google-cloud.module';
 
 import { UserModule } from '../user/user.module';
 import { AuthModule } from '../auth/auth.module';
@@ -17,7 +17,7 @@ import { AuthModule } from '../auth/auth.module';
     configModule,
     CommonModule,
     UserModule,
-    AwsS3Module,
+    GoogleCloudModule,
   ],
   controllers: [AppController],
   providers: [AppService],
