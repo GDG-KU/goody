@@ -59,3 +59,5 @@ report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 node_modules/
 dist/.DS_Store
 .DS_Store
+goody-447505-1e4bb7f285fd.json
+.DS_Store
