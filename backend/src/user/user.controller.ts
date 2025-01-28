@@ -20,6 +20,7 @@ import {
   ApiOkResponse,
   ApiOperation,
   ApiConsumes,
+  ApiTags,
 } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/guard/jwt-auth.guard';
 import { UserDto } from './dto/user.dto';
@@ -29,6 +30,7 @@ import { PatchUpdateUserPayload } from './payload/patch-update-user.payload';
 import { ProfileImageUpdatePayload } from './payload/profile-update-image-user.payload';
 import { UserData } from './type/user-data.type';
 @Controller('users')
+@ApiTags('User')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
