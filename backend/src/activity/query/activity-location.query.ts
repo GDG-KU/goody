@@ -1,9 +1,9 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsDecimal, IsInt, IsOptional } from 'class-validator';
+import { IsNumber } from 'class-validator';
 import { Type } from 'class-transformer';
 
 export class ActivityLocationQuery {
-  @IsDecimal()
+  @IsNumber()
   @Type(() => Number)
   @ApiProperty({
     description: '위도',
@@ -11,7 +11,7 @@ export class ActivityLocationQuery {
   })
   latitude!: number;
 
-  @IsDecimal()
+  @IsNumber()
   @Type(() => Number)
   @ApiProperty({
     description: '경도',

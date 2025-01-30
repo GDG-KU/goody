@@ -52,6 +52,13 @@ export class ActivityService {
 
     return ActivityListDto.from(activitys);
   }
+
+  async getAllActivities(): Promise<ActivityListDto> {
+    const activitys = await this.activityRepository.getAllActivities();
+
+    return ActivityListDto.from(activitys);
+  }
+
   async getRecentActivities(user: UserBaseInfo): Promise<ActivityListDto> {
     const activitys = await this.activityRepository.getRecentActivities(
       user.id,

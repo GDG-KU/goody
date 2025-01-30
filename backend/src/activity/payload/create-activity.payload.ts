@@ -51,14 +51,14 @@ export class CreateActivityPayload {
   })
   imageUrl!: string;
 
-  @IsDecimal()
+  @IsNumber()
   @ApiProperty({
     description: '위도',
     type: Number,
   })
   latitude!: number;
 
-  @IsDecimal()
+  @IsNumber()
   @ApiProperty({
     description: '경도',
     type: Number,

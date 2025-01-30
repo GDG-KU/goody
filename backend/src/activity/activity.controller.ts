@@ -59,6 +59,12 @@ export class ActivityController {
   ): Promise<ActivityListDto> {
     return this.activityService.getMyActivitys(user);
   }
+  @Get('all')
+  @ApiOperation({ summary: '모든 낭만 활동 정보를 가져옵니다' })
+  @ApiOkResponse({ type: ActivityListDto })
+  async getAllActivitys(): Promise<ActivityListDto> {
+    return this.activityService.getAllActivities();
+  }
 
   @Get('recents')
   @UseGuards(JwtAuthGuard)

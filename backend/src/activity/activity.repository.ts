@@ -54,6 +54,26 @@ export class ActivityRepository {
     });
   }
 
+  async getAllActivities(): Promise<ActivityData[]> {
+    return this.prisma.activity.findMany({
+      select: {
+        id: true,
+        imageUrl: true,
+        title: true,
+        description: true,
+        userId: true,
+        locationName: true,
+        activityKeywords: {
+          select: {
+            id: true,
+            keywordId: true,
+          },
+        },
+        activityLocation: true,
+      },
+    });
+  }
+
   async getMyActivitys(userId: number): Promise<ActivityData[]> {
     return this.prisma.activity.findMany({
       where: {

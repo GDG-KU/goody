@@ -1,5 +1,5 @@
-import { IsDate, IsEmail, IsInt, IsOptional, IsString } from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
+import { IsDate, IsEmail, IsOptional, IsString } from 'class-validator';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 
 export class SignUpPayload {
@@ -27,7 +27,7 @@ export class SignUpPayload {
   @IsOptional()
   @IsDate()
   @Type(() => Date)
-  @ApiProperty({
+  @ApiPropertyOptional({
     description: '생년월일',
     type: Date,
     nullable: true,

@@ -4,8 +4,7 @@
 /build
 
 # GCP 서비스 계정 키 파일
-/backend/goody-447505-1e4bb7f285fd.json
-
+goody-447505-1e4bb7f285fd.json
 
 # Logs
 logs
