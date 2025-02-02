@@ -1,7 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { ActivityData } from '../type/activity-data.type';
 import { ActivityLocationDto } from './activity-location.dto';
-
+import { KeywordData } from '../type/activity-data.type';
 export class ActivityDto {
   @ApiProperty({
     description: 'activity ID',
@@ -82,6 +82,44 @@ export class ActivityListDto {
   static from(activities: ActivityData[]): ActivityListDto {
     return {
       activities: ActivityDto.fromArray(activities),
+    };
+  }
+}
+export class KeywordDto {
+  @ApiProperty({
+    description: '키워드 ID',
+    type: Number,
+  })
+  id!: number;
+
+  @ApiProperty({
+    description: '키워드 이름',
+    type: String,
+  })
+  keywordName!: string;
+
+  static from(keyword: KeywordData): KeywordDto {
+    return {
+      id: keyword.id,
+      keywordName: keyword.keywordName,
+    };
+  }
+
+  static fromArray(keywords: KeywordData[]): KeywordDto[] {
+    return keywords.map((keyword) => this.from(keyword));
+  }
+}
+
+export class KeywordListDto {
+  @ApiProperty({
+    description: '키워드들',
+    type: [KeywordDto],
+  })
+  keywords!: KeywordDto[];
+
+  static from(keywords: KeywordData[]): KeywordListDto {
+    return {
+      keywords: KeywordDto.fromArray(keywords),
     };
   }
 }

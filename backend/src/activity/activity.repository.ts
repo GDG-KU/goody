@@ -6,6 +6,7 @@ import { User, Activity, ActivityKeyword } from '@prisma/client';
 import { ActivityQuery } from './query/activity.query';
 import { UpdateActivityData } from './type/update-activity-data.type';
 import { ActivityLocationQuery } from './query/activity-location.query';
+import { KeywordData } from './type/activity-data.type';
 @Injectable()
 export class ActivityRepository {
   constructor(private readonly prisma: PrismaService) {}
@@ -257,6 +258,16 @@ export class ActivityRepository {
       where: {
         id: {
           in: ids,
+        },
+      },
+    });
+  }
+
+  async getActivityKeywords(searchKeyword: string): Promise<KeywordData[]> {
+    return this.prisma.keyword.findMany({
+      where: {
+        keywordName: {
+          contains: searchKeyword,
         },
       },
     });

@@ -34,6 +34,7 @@ import { JwtAuthGuard } from 'src/auth/guard/jwt-auth.guard';
 import { CurrentUser } from 'src/auth/decorator/user.decorator';
 import { UserBaseInfo } from 'src/auth/type/user-base-info.type';
 import { ActivityLocationQuery } from './query/activity-location.query';
+import { KeywordListDto } from './dto/activity.dto';
 @Controller('activities')
 @ApiTags('Activity API')
 export class ActivityController {
@@ -108,5 +109,14 @@ export class ActivityController {
     @CurrentUser() user: UserBaseInfo,
   ): Promise<ActivityDto> {
     return this.activityService.patchUpdateActivity(activityId, payload, user);
+  }
+
+  @Get(':searchKeyword/keywords')
+  @ApiOperation({ summary: '활동 키워드 정보를 가져옵니다' })
+  @ApiOkResponse({ type: KeywordListDto })
+  async getActivityKeywords(
+    @Param('searchKeyword') searchKeyword: string,
+  ): Promise<KeywordListDto> {
+    return this.activityService.getActivityKeywords(searchKeyword);
   }
 }

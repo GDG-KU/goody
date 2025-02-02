@@ -1,4 +1,4 @@
-import { ActivityLocationData } from "./activity-location-data.type";
+import { ActivityLocationData } from './activity-location-data.type';
 
 export type ActivityData = {
   id: number;
@@ -12,4 +12,9 @@ export type ActivityData = {
     keywordId: number;
   }[];
   activityLocation: ActivityLocationData | null;
+};
+
+export type KeywordData = {
+  id: number;
+  keywordName: string;
 };

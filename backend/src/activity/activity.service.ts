@@ -16,7 +16,7 @@ import { PatchUpdateActivityPayload } from './payload/patch-update-activity.payl
 import { PutUpdateActivityPayload } from './payload/put-update-activity.payload';
 import { UserBaseInfo } from 'src/auth/type/user-base-info.type';
 import { get } from 'lodash';
-
+import { KeywordListDto } from './dto/activity.dto';
 @Injectable()
 export class ActivityService {
   constructor(private readonly activityRepository: ActivityRepository) {}
@@ -142,6 +142,13 @@ export class ActivityService {
       await this.activityRepository.getNearestActivities(query);
 
     return ActivityListDto.from(activities);
+  }
+
+  async getActivityKeywords(searchKeyword: string): Promise<KeywordListDto> {
+    const keywords =
+      await this.activityRepository.getActivityKeywords(searchKeyword);
+
+    return KeywordListDto.from(keywords);
   }
 
   private validateNullOf(
