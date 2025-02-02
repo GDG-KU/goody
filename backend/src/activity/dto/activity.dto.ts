@@ -34,6 +34,12 @@ export class ActivityDto {
   userId!: number;
 
   @ApiProperty({
+    description: '액티비티 장소 이름',
+    type: String,
+  })
+  locationName!: string;
+
+  @ApiProperty({
     description: '키워드들',
     type: [Number],
   })
@@ -53,6 +59,7 @@ export class ActivityDto {
       title: activity.title,
       description: activity.description,
       imageUrl: activity.imageUrl,
+      locationName: activity.locationName,
       location: activity.activityLocation
         ? ActivityLocationDto.from(activity.activityLocation)
         : null,
