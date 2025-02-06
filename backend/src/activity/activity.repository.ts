@@ -317,4 +317,27 @@ export class ActivityRepository {
       },
     });
   }
+
+  async getActivitiesByKeywordId(keywordId: number): Promise<ActivityData[]> {
+    return this.prisma.activity.findMany({
+      where: {
+        activityKeywords: { some: { keywordId } },
+      },
+      select: {
+        id: true,
+        title: true,
+        description: true,
+        locationName: true,
+        imageUrl: true,
+        userId: true,
+        activityKeywords: {
+          select: {
+            id: true,
+            keywordId: true,
+          },
+        },
+        activityLocation: true,
+      },
+    });
+  }
 }

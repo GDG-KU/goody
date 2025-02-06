@@ -22,6 +22,9 @@ WORKDIR /usr/src/app
 # OpenSSL 설치
 RUN apk add --no-cache openssl 
 
+# GCP 서비스 계정 키 파일 복사
+COPY goody-447505-1e4bb7f285fd.json ./goody-447505-1e4bb7f285fd.json
+
 COPY --from=builder /usr/src/app/dist ./dist
 COPY --from=builder /usr/src/app/node_modules ./node_modules
 COPY --from=builder /usr/src/app/package.json ./package.json

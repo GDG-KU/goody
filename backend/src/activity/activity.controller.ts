@@ -111,12 +111,14 @@ export class ActivityController {
     return this.activityService.patchUpdateActivity(activityId, payload, user);
   }
 
-  @Get(':searchKeyword/keywords')
-  @ApiOperation({ summary: '활동 키워드 정보를 가져옵니다' })
-  @ApiOkResponse({ type: KeywordListDto })
-  async getActivityKeywords(
-    @Param('searchKeyword') searchKeyword: string,
-  ): Promise<KeywordListDto> {
-    return this.activityService.getActivityKeywords(searchKeyword);
+  @Get('/keyword/:keywordId')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: '키워드 ID로 관련된 활동들을 검색합니다' })
+  @ApiOkResponse({ type: ActivityListDto })
+  async getActivitiesByKeywordId(
+    @Param('keywordId', ParseIntPipe) keywordId: number,
+  ): Promise<ActivityListDto> {
+    return this.activityService.getActivitiesByKeywordId(keywordId);
   }
 }

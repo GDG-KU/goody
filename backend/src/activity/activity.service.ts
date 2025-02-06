@@ -151,6 +151,13 @@ export class ActivityService {
     return KeywordListDto.from(keywords);
   }
 
+  async getActivitiesByKeywordId(keywordId: number): Promise<ActivityListDto> {
+    const activities =
+      await this.activityRepository.getActivitiesByKeywordId(keywordId);
+
+    return ActivityListDto.from(activities);
+  }
+
   private validateNullOf(
     payload: PatchUpdateActivityPayload,
   ): UpdateActivityData {
